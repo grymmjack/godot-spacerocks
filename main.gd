@@ -1,6 +1,7 @@
 extends Node
 
 @export var rock_scene:PackedScene
+@export var enemy_scene:PackedScene
 
 var screensize:Vector2 = Vector2.ZERO
 var level:int = 0
@@ -38,9 +39,12 @@ func game_over() -> void:
 	$HUD.game_over()
 
 
+
 func new_game() -> void:
 	# remove any old rocks from previous game
 	get_tree().call_group("rocks", "queue_free")
+	# remove any old enemies from previous game
+	get_tree().call_group("enemies", "queue_free")
 	level = 0
 	score = 0
 	$HUD.update_score(score)
@@ -55,6 +59,7 @@ func new_level() -> void:
 	$HUD.show_message("Wave %s" % level)
 	for i in level:
 		spawn_rock(3)
+	$EnemyTimer.start(randf_range(5, 10))
 
 
 func spawn_rock(size, pos=null, vel=null) -> void:
@@ -78,3 +83,10 @@ func _on_rock_exploded(size, radius, pos, vel) -> void:
 		var newpos = pos + dir * radius
 		var newvel = dir * vel.length() * 1.1
 		spawn_rock(size - 1, newpos, newvel)
+
+
+func _on_enemy_timer_timeout() -> void:
+	var e = enemy_scene.instantiate()
+	add_child(e)
+	e.target = $Player
+	$EnemyTimer.start(randf_range(20, 40))

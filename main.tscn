@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://dl3podg65ie5x"]
+[gd_scene load_steps=8 format=3 uid="uid://dl3podg65ie5x"]
 
 [ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
 [ext_resource type="Script" path="res://main.gd" id="1_eyvbe"]
 [ext_resource type="PackedScene" uid="uid://cbgmv7h00ij4f" path="res://player.tscn" id="2_eu3xu"]
 [ext_resource type="PackedScene" uid="uid://co606jqflxw6m" path="res://rock.tscn" id="2_lrp2b"]
+[ext_resource type="PackedScene" uid="uid://dw4rodtlfvbum" path="res://enemy.tscn" id="3_4y3id"]
 [ext_resource type="PackedScene" uid="uid://df61wqntfphtr" path="res://hud.tscn" id="4_stxmg"]
 
 [sub_resource type="Curve2D" id="Curve2D_log48"]
@@ -16,6 +17,7 @@ point_count = 5
 process_mode = 3
 script = ExtResource("1_eyvbe")
 rock_scene = ExtResource("2_lrp2b")
+enemy_scene = ExtResource("3_4y3id")
 
 [node name="Background" type="Sprite2D" parent="."]
 position = Vector2(576, 324)
@@ -25,8 +27,6 @@ texture = ExtResource("1_aygtu")
 [node name="Player" parent="." instance=ExtResource("2_eu3xu")]
 position = Vector2(608, 320)
 
-[node name="HUD" parent="." instance=ExtResource("4_stxmg")]
-
 [node name="RockPath" type="Path2D" parent="."]
 position = Vector2(0, -64)
 curve = SubResource("Curve2D_log48")
@@ -34,6 +34,12 @@ curve = SubResource("Curve2D_log48")
 [node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
 position = Vector2(64, 128)
 
+[node name="EnemyTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="HUD" parent="." instance=ExtResource("4_stxmg")]
+
 [connection signal="dead" from="Player" to="." method="game_over"]
 [connection signal="lives_changed" from="Player" to="HUD" method="update_lives"]
+[connection signal="timeout" from="EnemyTimer" to="." method="_on_enemy_timer_timeout"]
 [connection signal="start_game" from="HUD" to="." method="new_game"]
