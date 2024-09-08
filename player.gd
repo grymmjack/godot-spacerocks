@@ -37,12 +37,19 @@ func change_state(new_state:int) -> void:
 	match new_state:
 		INIT:
 			$CollisionShape2D.set_deferred("disabled", true)
+			$Sprite2D.modulate.a = 0.5
 		ALIVE:
 			$CollisionShape2D.set_deferred("disabled", false)
+			$Sprite2D.modulate.a = 1.0
 		INVULNERABLE:
 			$CollisionShape2D.set_deferred("disabled", true)
+			$Sprite2D.modulate.a = 0.5
+			$InvulnerabilityTimer.start()
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
+			$Sprite2D.hide()
+			linear_velocity = Vector2.ZERO
+			dead.emit()
 	state = new_state
 
 
@@ -135,3 +142,21 @@ func _on_rotation_cooldown_timeout() -> void:
 			rotation_iterations = 0
 		angular_damp = ANGULAR_DAMP_NORMAL
 		rotation_dir = 0
+
+
+func _on_invulnerability_timer_timeout() -> void:
+	change_state(ALIVE)
+
+
+func _on_body_entered(body: Node) -> void:
+	if body.is_in_group("rocks"):
+		body.explode()
+		lives -= 1
+		explode()
+
+
+func explode() -> void:
+	$Explosion.show()
+	$Explosion/AnimationPlayer.play("explosion")
+	await $Explosion/AnimationPlayer.animation_finished
+	$Explosion.hide()
