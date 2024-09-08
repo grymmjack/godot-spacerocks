@@ -37,10 +37,11 @@ func _input(event: InputEvent) -> void:
 func game_over() -> void:
 	playing = false
 	$HUD.game_over()
-
+	$Music.stop()
 
 
 func new_game() -> void:
+	$Music.play()
 	# remove any old rocks from previous game
 	get_tree().call_group("rocks", "queue_free")
 	# remove any old enemies from previous game
@@ -55,6 +56,7 @@ func new_game() -> void:
 
 
 func new_level() -> void:
+	$LevelupSound.play()
 	level += 1
 	$HUD.show_message("Wave %s" % level)
 	for i in level:
@@ -76,6 +78,7 @@ func spawn_rock(size, pos=null, vel=null) -> void:
 
 
 func _on_rock_exploded(size, radius, pos, vel) -> void:
+	$ExplosionSound.play()
 	if size <= 1:
 		return
 	for offset in [ -1, 1 ]:

@@ -55,6 +55,7 @@ func change_state(new_state:int) -> void:
 			$Sprite2D.hide()
 			linear_velocity = Vector2.ZERO
 			dead.emit()
+			$EngineSound.stop()
 	state = new_state
 
 
@@ -75,6 +76,10 @@ func get_input(delta: float) -> void:
 		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
+		if not $EngineSound.playing:
+			$EngineSound.play()
+		else:
+			$EngineSound.stop()
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 		if Input.is_action_just_pressed("rotate_stop"):
 			rotation_dir = 0
@@ -109,6 +114,7 @@ func shoot() -> void:
 	var b = bullet_scene.instantiate()
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
+	$LaserSound.play()
 
 
 func _physics_process(delta: float) -> void:
