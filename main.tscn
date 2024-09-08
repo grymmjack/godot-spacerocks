@@ -7,7 +7,7 @@
 
 [sub_resource type="Curve2D" id="Curve2D_log48"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 960, 128, 0, 0, 0, 0, 960, 576, 0, 0, 0, 0, 64, 576, 0, 0, 0, 0, 64, 128)
+"points": PackedVector2Array(0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 1088, 128, 0, 0, 0, 0, 1088, 640, 0, 0, 0, 0, 64, 640, 0, 0, 0, 0, 64, 128)
 }
 point_count = 5
 
@@ -21,9 +21,11 @@ scale = Vector2(0.6, 0.6)
 texture = ExtResource("1_aygtu")
 
 [node name="RockPath" type="Path2D" parent="."]
+position = Vector2(0, -64)
 curve = SubResource("Curve2D_log48")
 
 [node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
 position = Vector2(64, 128)
 
 [node name="Player" parent="." instance=ExtResource("2_eu3xu")]
+position = Vector2(608, 320)
