@@ -1,5 +1,8 @@
 extends RigidBody2D
 
+signal lives_changed
+signal dead
+
 @export var engine_power:int = 500
 @export var spin_power:int = 8000
 @export var bullet_scene:PackedScene
@@ -10,6 +13,8 @@ var thrust:Vector2 = Vector2.ZERO
 var rotation_dir:int = 0
 var rotation_multiplier:int = 0
 var rotation_iterations:int = 0
+var reset_pos:bool = false
+var lives = 0: set = set_lives
 
 const ANGULAR_DAMP_TURBO:float = 1.0
 const ANGULAR_DAMP_NORMAL:float = 4.0
@@ -94,6 +99,25 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
 	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
 	physics_state.transform = xform
+	if reset_pos:
+		physics_state.transform.origin = screensize / 2
+		reset_pos = false
+
+
+func set_lives(value:int) -> void:
+	lives = value
+	lives_changed.emit(lives)
+	if lives <= 0:
+		change_state(DEAD)
+	else:
+		change_state(INVULNERABLE)
+
+
+func reset() -> void:
+	reset_pos = true
+	$Sprite2D.show()
+	lives = 3
+	change_state(ALIVE)
 
 
 func _on_gun_cooldown_timeout() -> void:
