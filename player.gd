@@ -9,6 +9,13 @@ var can_shoot:bool = true
 var thrust:Vector2 = Vector2.ZERO
 var rotation_dir:int = 0
 var rotation_multiplier:int = 0
+var rotation_iterations:int = 0
+
+const ANGULAR_DAMP_TURBO:float = 1.0
+const ANGULAR_DAMP_NORMAL:float = 4.0
+const LINEAR_DAMP_TURBO:float = 33.0
+const LINEAR_DAMP_NORMAL:float = 1.0
+
 var screensize:Vector2 = Vector2.ZERO
 
 enum { INIT, ALIVE, INVULNERABLE, DEAD }
@@ -43,9 +50,11 @@ func get_input(delta: float) -> void:
 	if state in [ DEAD, INIT ]:
 		return
 	if Input.is_action_pressed("turbo_rotate"):
-		angular_damp = 0.5
+		angular_damp *= 0.25
+		thrust = Vector2.ZERO
+		linear_damp = LINEAR_DAMP_TURBO
 	else:
-		angular_damp = 5.0
+		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
@@ -56,7 +65,11 @@ func get_input(delta: float) -> void:
 	if Input.is_action_pressed("rotate_right"):
 		rotation_dir = 1
 	if Input.is_action_just_pressed("rotate_stop"):
+		linear_damp = LINEAR_DAMP_TURBO
 		rotation_dir = 0
+		rotation_iterations = 0
+	if Input.is_action_just_released("rotate_stop"):
+		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 
@@ -88,4 +101,13 @@ func _on_gun_cooldown_timeout() -> void:
 
 
 func _on_rotation_cooldown_timeout() -> void:
-	rotation_dir = 0
+	if Input.is_action_pressed("rotate_left") || Input.is_action_pressed("rotate_right"):
+		if rotation_iterations % 3 == 0:
+			rotation_iterations += 1
+		angular_damp = clamp(angular_damp, ANGULAR_DAMP_TURBO, ANGULAR_DAMP_TURBO * rotation_iterations)
+	else:
+		rotation_iterations -= 1
+		if rotation_iterations < 0:
+			rotation_iterations = 0
+		angular_damp = ANGULAR_DAMP_NORMAL
+		rotation_dir = 0

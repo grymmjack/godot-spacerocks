@@ -8,8 +8,8 @@
 radius = 62.0322
 
 [node name="Player" type="RigidBody2D"]
-linear_damp = 0.8
-angular_damp = 5.0
+linear_damp = 0.75
+angular_damp = 4.0
 script = ExtResource("1_fpju5")
 bullet_scene = ExtResource("2_inuna")
 
