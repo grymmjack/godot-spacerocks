@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dw4rodtlfvbum"]
+[gd_scene load_steps=10 format=3 uid="uid://dw4rodtlfvbum"]
 
 [ext_resource type="Script" path="res://enemy.gd" id="1_33kmr"]
 [ext_resource type="Texture2D" uid="uid://beebfko0lf32" path="res://assets/enemy_saucer.png" id="2_33gio"]
+[ext_resource type="PackedScene" uid="uid://6cgln8cut3ao" path="res://enemy_bullet.tscn" id="2_aqagt"]
 [ext_resource type="PackedScene" uid="uid://kmpikcjj43hc" path="res://enemy_paths.tscn" id="3_0hssg"]
 [ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://explosion.tscn" id="4_o1j2s"]
 
@@ -48,6 +49,7 @@ _data = {
 
 [node name="Enemy" type="Area2D" groups=["enemies"]]
 script = ExtResource("1_33kmr")
+bullet_scene = ExtResource("2_aqagt")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)
@@ -59,7 +61,8 @@ shape = SubResource("CircleShape2D_2eyjf")
 
 [node name="EnemyPaths" parent="." instance=ExtResource("3_0hssg")]
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="EnemyPaths"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("../EnemyPaths")
 libraries = {
 "": SubResource("AnimationLibrary_n86mv")
 }
@@ -71,4 +74,5 @@ visible = false
 wait_time = 1.5
 autostart = true
 
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
