@@ -6,9 +6,10 @@ extends Area2D
 @export var health:int = 3
 @export var bullet_spread:float = 0.2
 
-
 var follow = PathFollow2D.new()
 var target = null
+var paused:bool = false
+
 
 func _ready() -> void:
 	$Sprite2D.frame = randi() % 3
@@ -18,6 +19,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if paused:
+		return
 	rotation += deg_to_rad(rotation_speed) * delta
 	follow.progress += speed * delta
 	position = follow.global_position
@@ -26,6 +29,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_gun_cooldown_timeout() -> void:
+	if paused:
+		return
 	var shot_type:int = randi_range(1, 6)
 	if shot_type > 5:
 		shoot_pulse(3, 0.15)

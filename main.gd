@@ -8,6 +8,9 @@ var level:int = 0
 var score:int = 0
 var playing:bool = false
 
+const MUSIC_VOLUME = 0
+const MUSIC_PAUSE_VOLUME = -80
+
 
 func _ready() -> void:
 	screensize = get_viewport().get_visible_rect().size
@@ -29,9 +32,19 @@ func _input(event: InputEvent) -> void:
 		if get_tree().paused:
 			message.text = "Paused"
 			message.show()
+			$Music.volume_db = MUSIC_PAUSE_VOLUME
+			var enemies = get_tree().get_nodes_in_group("enemies")
+			if enemies.size() > 0:
+				for enemy in enemies:
+					enemy.paused = true
 		else:
 			message.text = ""
 			message.hide()
+			$Music.volume_db = MUSIC_VOLUME
+			var enemies = get_tree().get_nodes_in_group("enemies")
+			if enemies.size() > 0:
+				for enemy in enemies:
+					enemy.paused = false
 
 
 func game_over() -> void:

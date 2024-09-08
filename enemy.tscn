@@ -80,6 +80,7 @@ autostart = true
 stream = ExtResource("6_ktid2")
 
 [node name="ShootSound" type="AudioStreamPlayer" parent="."]
+process_mode = 1
 stream = ExtResource("7_p0ykq")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

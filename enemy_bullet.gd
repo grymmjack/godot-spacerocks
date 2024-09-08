@@ -3,6 +3,8 @@ extends Area2D
 @export var speed:int = 1000
 @export var damage:int = 15
 
+var paused:bool = false
+
 
 func start(_pos, _dir):
 	position = _pos
@@ -10,6 +12,8 @@ func start(_pos, _dir):
 
 
 func _process(delta: float) -> void:
+	if paused:
+		return
 	position += transform.x * speed * delta
 
 
