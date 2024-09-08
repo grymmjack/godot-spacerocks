@@ -13,6 +13,7 @@ _data = {
 point_count = 5
 
 [node name="Main" type="Node"]
+process_mode = 3
 script = ExtResource("1_eyvbe")
 rock_scene = ExtResource("2_lrp2b")
 
