@@ -8,9 +8,7 @@
 radius = 62.0322
 
 [node name="Player" type="RigidBody2D"]
-linear_damp_mode = 1
-linear_damp = 1.0
-angular_damp_mode = 1
+linear_damp = 0.8
 angular_damp = 5.0
 script = ExtResource("1_fpju5")
 bullet_scene = ExtResource("2_inuna")
@@ -32,4 +30,9 @@ position = Vector2(50, 0)
 one_shot = true
 autostart = true
 
+[node name="RotationCooldown" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
+[connection signal="timeout" from="RotationCooldown" to="." method="_on_rotation_cooldown_timeout"]

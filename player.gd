@@ -8,6 +8,7 @@ extends RigidBody2D
 var can_shoot:bool = true
 var thrust:Vector2 = Vector2.ZERO
 var rotation_dir:int = 0
+var rotation_multiplier:int = 0
 var screensize:Vector2 = Vector2.ZERO
 
 enum { INIT, ALIVE, INVULNERABLE, DEAD }
@@ -34,17 +35,28 @@ func change_state(new_state:int) -> void:
 
 
 func _process(delta: float) -> void:
-	delta = delta
-	get_input()
+	get_input(delta)
 
 
-func get_input() -> void:
+func get_input(delta: float) -> void:
 	thrust = Vector2.ZERO
 	if state in [ DEAD, INIT ]:
 		return
+	if Input.is_action_pressed("turbo_rotate"):
+		angular_damp = 0.5
+	else:
+		angular_damp = 5.0
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
+		if Input.is_action_just_pressed("rotate_stop"):
+			rotation_dir = 0
+	if Input.is_action_pressed("rotate_left"):
+		rotation_dir = -1
+	if Input.is_action_pressed("rotate_right"):
+		rotation_dir = 1
+	if Input.is_action_just_pressed("rotate_stop"):
+		rotation_dir = 0
 	if Input.is_action_pressed("shoot") and can_shoot:
 		shoot()
 
@@ -63,6 +75,7 @@ func _physics_process(delta: float) -> void:
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
 
+
 func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
 	var xform:Transform2D = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
@@ -72,3 +85,7 @@ func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
 
 func _on_gun_cooldown_timeout() -> void:
 	can_shoot = true
+
+
+func _on_rotation_cooldown_timeout() -> void:
+	rotation_dir = 0
