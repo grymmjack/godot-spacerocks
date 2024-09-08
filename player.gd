@@ -65,6 +65,7 @@ func _process(delta: float) -> void:
 
 
 func get_input(delta: float) -> void:
+	$Exhaust.emitting = false
 	thrust = Vector2.ZERO
 	if state in [ DEAD, INIT ]:
 		return
@@ -76,6 +77,7 @@ func get_input(delta: float) -> void:
 		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("thrust"):
 		thrust = transform.x * engine_power
+		$Exhaust.emitting = true
 		if not $EngineSound.playing:
 			$EngineSound.play()
 		else:
