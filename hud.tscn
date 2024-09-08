@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://df61wqntfphtr"]
+[gd_scene load_steps=13 format=3 uid="uid://df61wqntfphtr"]
 
 [ext_resource type="FontFile" uid="uid://cg8kr11cqrt5s" path="res://assets/kenvector_future_thin.ttf" id="1_ofa15"]
 [ext_resource type="Script" path="res://hud.gd" id="1_pegsi"]
@@ -8,12 +8,20 @@
 [ext_resource type="Texture2D" uid="uid://de1g5xta7ti3h" path="res://assets/play_button_h.png" id="4_8hupu"]
 [ext_resource type="Texture2D" uid="uid://bj0d5pmgfherf" path="res://assets/bar_glass_200.png" id="4_10lpo"]
 [ext_resource type="Texture2D" uid="uid://bkvghbus453m6" path="res://assets/bar_green_200.png" id="5_cgbys"]
+[ext_resource type="AudioStream" uid="uid://q7hmfuheyie6" path="res://assets/sounds/levelup.ogg" id="9_fyax1"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_4g4me"]
 font = ExtResource("1_ofa15")
 font_size = 64
 
-[node name="HUD" type="Node"]
+[sub_resource type="InputEventKey" id="InputEventKey_dprgi"]
+pressed = true
+keycode = 13
+
+[sub_resource type="Shortcut" id="Shortcut_dma03"]
+events = [SubResource("InputEventKey_dprgi"), null]
+
+[node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_pegsi")
 
 [node name="Timer" type="Timer" parent="."]
@@ -92,8 +100,19 @@ horizontal_alignment = 1
 [node name="StartButton" type="TextureButton" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath(".")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+focus_next = NodePath(".")
+focus_previous = NodePath(".")
+shortcut = SubResource("Shortcut_dma03")
 texture_normal = ExtResource("3_decph")
 texture_hover = ExtResource("4_8hupu")
+
+[node name="FreeGuySound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_fyax1")
+pitch_scale = 3.0
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
 [connection signal="pressed" from="VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]

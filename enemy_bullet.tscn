@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://6cgln8cut3ao"]
+[gd_scene load_steps=5 format=3 uid="uid://6cgln8cut3ao"]
 
 [ext_resource type="Script" path="res://enemy_bullet.gd" id="1_mvodv"]
 [ext_resource type="Texture2D" uid="uid://c10g0uqemcnyn" path="res://assets/laser_green.png" id="2_orys7"]
+[ext_resource type="AudioStream" uid="uid://ckckxicfxlddy" path="res://assets/sounds/explosion.wav" id="3_rcl3t"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k4qu6"]
 radius = 2.0
@@ -20,5 +21,8 @@ shape = SubResource("CapsuleShape2D_k4qu6")
 
 [node name="VisibleOnScreenEnabler2D" type="VisibleOnScreenEnabler2D" parent="."]
 
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_rcl3t")
+
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="screen_exited" from="VisibleOnScreenEnabler2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
+[connection signal="screen_exited" from="VisibleOnScreenEnabler2D" to="." method="_on_visible_on_screen_enabler_2d_screen_exited"]

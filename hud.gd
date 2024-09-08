@@ -15,6 +15,10 @@ var bar_textures = {
 }
 
 
+func _ready() -> void:
+	start_button.grab_focus()
+
+
 func show_message(text:String) -> void:
 	message.text = text
 	message.show()
@@ -31,6 +35,10 @@ func update_shield(value:float) -> void:
 
 
 func update_score(value:int) -> void:
+	# Free guy every 150 points
+	if value % 150 == 0:
+		$MarginContainer/HBoxContainer/LivesCounter/L3.duplicate()
+		$FreeGuySound.play()
 	score_label.text = str(value)
 
 

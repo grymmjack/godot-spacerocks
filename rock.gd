@@ -34,6 +34,7 @@ func explode() -> void:
 	$Sprite2D.hide()
 	$Explosion/AnimationPlayer.play("explosion")
 	$Explosion.show()
+	$ExplosionSound.play()
 	exploded.emit(size, radius, position, linear_velocity)
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0

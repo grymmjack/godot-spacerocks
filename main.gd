@@ -13,10 +13,13 @@ const MUSIC_PAUSE_VOLUME = -80
 
 
 func _ready() -> void:
+	$Player.hide()
+	$HUD/MarginContainer/HBoxContainer.hide()
 	screensize = get_viewport().get_visible_rect().size
 
 
 func _process(delta: float) -> void:
+	delta = delta
 	if not playing:
 		return
 	if get_tree().get_nodes_in_group("rocks").size() == 0:
@@ -55,6 +58,8 @@ func game_over() -> void:
 
 func new_game() -> void:
 	$Music.play()
+	$Player.show()
+	$HUD/MarginContainer/HBoxContainer.show()
 	# remove any old rocks from previous game
 	get_tree().call_group("rocks", "queue_free")
 	# remove any old enemies from previous game
@@ -69,9 +74,14 @@ func new_game() -> void:
 
 
 func new_level() -> void:
+	# remove any old enemies from previous game
+	get_tree().call_group("enemies", "queue_free")
 	$LevelupSound.play()
 	level += 1
 	$HUD.show_message("Wave %s" % level)
+	if level > 1:
+		score += level
+		$HUD.update_score(score)
 	for i in level:
 		spawn_rock(3)
 	$EnemyTimer.start(randf_range(5, 10))
@@ -92,6 +102,8 @@ func spawn_rock(size, pos=null, vel=null) -> void:
 
 func _on_rock_exploded(size, radius, pos, vel) -> void:
 	$ExplosionSound.play()
+	score += 10 * size
+	$HUD.update_score(score)
 	if size <= 1:
 		return
 	for offset in [ -1, 1 ]:

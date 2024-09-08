@@ -15,7 +15,7 @@ signal shield_changed
 var shield = 0.0: set = set_shield
 var can_shoot:bool = true
 var thrust:Vector2 = Vector2.ZERO
-var rotation_dir:int = 0
+var rotation_dir:float = 0.0
 var rotation_multiplier:int = 0
 var rotation_iterations:int = 0
 var reset_pos:bool = false
@@ -33,7 +33,7 @@ var state = INIT
 
 
 func _ready() -> void:
-	change_state(ALIVE)
+	change_state(INIT)
 	screensize = get_viewport_rect().size
 	$GunCooldown.wait_time = fire_rate
 
@@ -43,20 +43,23 @@ func change_state(new_state:int) -> void:
 		INIT:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
+			state = INIT
 		ALIVE:
 			$CollisionShape2D.set_deferred("disabled", false)
 			$Sprite2D.modulate.a = 1.0
+			state = ALIVE
 		INVULNERABLE:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
 			$InvulnerabilityTimer.start()
+			state = INVULNERABLE
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.hide()
 			linear_velocity = Vector2.ZERO
 			dead.emit()
-			$EngineSound.stop()
-	state = new_state
+			$EngineSound.volume_db = -80
+			state = DEAD
 
 
 func _process(delta: float) -> void:
@@ -65,6 +68,7 @@ func _process(delta: float) -> void:
 
 
 func get_input(delta: float) -> void:
+	delta = delta
 	$Exhaust.emitting = false
 	thrust = Vector2.ZERO
 	if state in [ DEAD, INIT ]:
@@ -76,15 +80,14 @@ func get_input(delta: float) -> void:
 	else:
 		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("thrust"):
+		$EngineSound.volume_db = 0.0
 		thrust = transform.x * engine_power
 		$Exhaust.emitting = true
-		if not $EngineSound.playing:
-			$EngineSound.play()
-		else:
-			$EngineSound.stop()
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 		if Input.is_action_just_pressed("rotate_stop"):
 			rotation_dir = 0
+	else:
+		$EngineSound.volume_db = -80.0
 	if Input.is_action_pressed("rotate_left"):
 		rotation_dir = -1
 	if Input.is_action_pressed("rotate_right"):
@@ -120,28 +123,29 @@ func shoot() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	delta = delta
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
 
 
 func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+	if reset_pos:
+		physics_state.transform.origin = screensize / 2
+		reset_pos = false
 	var xform:Transform2D = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
 	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
 	physics_state.transform = xform
-	if reset_pos:
-		physics_state.transform.origin = screensize / 2
-		reset_pos = false
 
 
 func set_lives(value:int) -> void:
 	lives = value
+	shield = max_shield
 	lives_changed.emit(lives)
 	if lives <= 0:
 		change_state(DEAD)
 	else:
 		change_state(INVULNERABLE)
-	shield = max_shield
 
 
 func reset() -> void:
@@ -149,6 +153,7 @@ func reset() -> void:
 	$Sprite2D.show()
 	lives = 3
 	change_state(ALIVE)
+	shield = max_shield
 
 
 func _on_gun_cooldown_timeout() -> void:
@@ -180,6 +185,7 @@ func _on_body_entered(body: Node) -> void:
 
 
 func explode() -> void:
+	$ExplosionSound.play()
 	$Explosion.show()
 	$Explosion/AnimationPlayer.play("explosion")
 	await $Explosion/AnimationPlayer.animation_finished
