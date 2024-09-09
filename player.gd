@@ -1,44 +1,41 @@
 extends RigidBody2D
 
 signal lives_changed
-signal dead
 signal shield_changed
+signal dead
 
-@export var max_shield:float = 100.0
-@export var shield_regen:float = 5.0
-
-@export var engine_power:int = 500
-@export var spin_power:int = 8000
-@export var bullet_scene:PackedScene
-@export var fire_rate:float = 0.25
-
-var shield = 0.0: set = set_shield
-var can_shoot:bool = true
-var thrust:Vector2 = Vector2.ZERO
-var rotation_dir:float = 0.0
-var rotation_multiplier:int = 0
-var rotation_iterations:int = 0
-var reset_pos:bool = false
-var lives = 0: set = set_lives
-
-const ANGULAR_DAMP_TURBO:float = 1.0
-const ANGULAR_DAMP_NORMAL:float = 4.0
-const LINEAR_DAMP_TURBO:float = 33.0
-const LINEAR_DAMP_NORMAL:float = 1.0
-
-var screensize:Vector2 = Vector2.ZERO
+@export var bullet_scene : PackedScene
+@export var engine_power = 500
+@export var spin_power = 8000
+@export var fire_rate = 0.25
+@export var max_shield = 100.0
+@export var shield_regen = 5.0
 
 enum { INIT, ALIVE, INVULNERABLE, DEAD }
 var state = INIT
+var thrust = Vector2.ZERO
+var rotation_dir = 0.0
+var screensize = Vector2.ZERO
+var can_shoot: = true
+var reset_pos = false
+var lives = 0: set = set_lives
+var shield = 0: set = set_shield
+var rotation_multiplier = 0
+var rotation_iterations = 0
+
+const ANGULAR_DAMP_TURBO = 1.0
+const ANGULAR_DAMP_NORMAL = 4.0
+const LINEAR_DAMP_TURBO = 33.0
+const LINEAR_DAMP_NORMAL = 1.0
 
 
-func _ready() -> void:
+func _ready():
 	change_state(INIT)
 	screensize = get_viewport_rect().size
 	$GunCooldown.wait_time = fire_rate
 
 
-func change_state(new_state:int) -> void:
+func change_state(new_state):
 	match new_state:
 		INIT:
 			$CollisionShape2D.set_deferred("disabled", true)
@@ -56,19 +53,18 @@ func change_state(new_state:int) -> void:
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.hide()
+			$EngineSound.volume_db = -80
 			linear_velocity = Vector2.ZERO
 			dead.emit()
-			$EngineSound.volume_db = -80
 			state = DEAD
 
 
-func _process(delta: float) -> void:
+func _process(delta):
 	get_input(delta)
 	shield += shield_regen * delta
 
 
-func get_input(delta: float) -> void:
-	delta = delta
+func get_input(delta):
 	$Exhaust.emitting = false
 	thrust = Vector2.ZERO
 	if state in [ DEAD, INIT ]:
@@ -102,7 +98,7 @@ func get_input(delta: float) -> void:
 		shoot()
 
 
-func set_shield(value:float) -> void:
+func set_shield(value):
 	value = min(value, max_shield)
 	shield = value
 	shield_changed.emit(shield / max_shield)
@@ -111,34 +107,34 @@ func set_shield(value:float) -> void:
 		explode()
 
 
-func shoot() -> void:
+func shoot():
 	if state == INVULNERABLE:
 		return
 	can_shoot = false
 	$GunCooldown.start()
 	var b = bullet_scene.instantiate()
+	b.name = "Player Bullet"
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
 	$LaserSound.play()
 
 
-func _physics_process(delta: float) -> void:
-	delta = delta
+func _physics_process(delta):
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
 
 
-func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+func _integrate_forces(physics_state):
 	if reset_pos:
 		physics_state.transform.origin = screensize / 2
 		reset_pos = false
-	var xform:Transform2D = physics_state.transform
+	var xform = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
 	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
 	physics_state.transform = xform
 
 
-func set_lives(value:int) -> void:
+func set_lives(value):
 	lives = value
 	shield = max_shield
 	lives_changed.emit(lives)
@@ -148,7 +144,7 @@ func set_lives(value:int) -> void:
 		change_state(INVULNERABLE)
 
 
-func reset() -> void:
+func reset():
 	reset_pos = true
 	$Sprite2D.show()
 	lives = 3
@@ -156,11 +152,11 @@ func reset() -> void:
 	shield = max_shield
 
 
-func _on_gun_cooldown_timeout() -> void:
+func _on_gun_cooldown_timeout():
 	can_shoot = true
 
 
-func _on_rotation_cooldown_timeout() -> void:
+func _on_rotation_cooldown_timeout():
 	if Input.is_action_pressed("rotate_left") || Input.is_action_pressed("rotate_right"):
 		if rotation_iterations % 3 == 0:
 			rotation_iterations += 1
@@ -173,15 +169,14 @@ func _on_rotation_cooldown_timeout() -> void:
 		rotation_dir = 0
 
 
-func _on_invulnerability_timer_timeout() -> void:
+func _on_invulnerability_timer_timeout():
 	change_state(ALIVE)
 
 
-func _on_body_entered(body: Node) -> void:
+func _on_player_body_entered(body):
 	if body.is_in_group("rocks"):
 		shield -= body.size * 25
 		body.explode()
-
 
 
 func explode() -> void:

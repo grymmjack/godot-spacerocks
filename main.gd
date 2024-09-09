@@ -1,32 +1,34 @@
 extends Node
 
-@export var rock_scene:PackedScene
-@export var enemy_scene:PackedScene
+@export var rock_scene : PackedScene
+@export var enemy_scene : PackedScene
 
-var screensize:Vector2 = Vector2.ZERO
-var level:int = 0
-var score:int = 0
-var playing:bool = false
+var screensize = Vector2.ZERO
+var level = 0
+var score = 0
+var playing = false
 
 const MUSIC_VOLUME = 0
 const MUSIC_PAUSE_VOLUME = -80
 
 
-func _ready() -> void:
+func _ready():
+	randomize()
+	screensize = get_viewport().get_visible_rect().size
 	$Player.hide()
 	$HUD/MarginContainer/HBoxContainer.hide()
-	screensize = get_viewport().get_visible_rect().size
+	for i in 3:
+		spawn_rock(3)
 
 
-func _process(delta: float) -> void:
-	delta = delta
-	if not playing:
+func _process(delta):
+	if !playing:
 		return
 	if get_tree().get_nodes_in_group("rocks").size() == 0:
 		new_level()
 
 
-func _input(event: InputEvent) -> void:
+func _input(event):
 	if event.is_action_pressed("pause"):
 		if not playing:
 			return
@@ -36,28 +38,19 @@ func _input(event: InputEvent) -> void:
 			message.text = "Paused"
 			message.show()
 			$Music.volume_db = MUSIC_PAUSE_VOLUME
-			var enemies = get_tree().get_nodes_in_group("enemies")
-			if enemies.size() > 0:
-				for enemy in enemies:
-					enemy.paused = true
 		else:
 			message.text = ""
 			message.hide()
 			$Music.volume_db = MUSIC_VOLUME
-			var enemies = get_tree().get_nodes_in_group("enemies")
-			if enemies.size() > 0:
-				for enemy in enemies:
-					enemy.paused = false
 
 
-func game_over() -> void:
+func game_over():
 	playing = false
 	$HUD.game_over()
 	$Music.stop()
 
 
-func new_game() -> void:
-	$Music.play()
+func new_game():
 	$Player.show()
 	$HUD/MarginContainer/HBoxContainer.show()
 	# remove any old rocks from previous game
@@ -67,16 +60,18 @@ func new_game() -> void:
 	level = 0
 	score = 0
 	$HUD.update_score(score)
-	$HUD.show_message("Get Ready!")
 	$Player.reset()
+	$HUD.show_message("Get Ready!")
 	await $HUD/Timer.timeout
 	playing = true
+	$Music.play()
 
 
-func new_level() -> void:
+func new_level():
+	$LevelupSound.play()
 	# remove any old enemies from previous game
 	get_tree().call_group("enemies", "queue_free")
-	$LevelupSound.play()
+	$EnemyTimer.start(randf_range(5, 10))
 	level += 1
 	$HUD.show_message("Wave %s" % level)
 	if level > 1:
@@ -84,10 +79,9 @@ func new_level() -> void:
 		$HUD.update_score(score)
 	for i in level:
 		spawn_rock(3)
-	$EnemyTimer.start(randf_range(5, 10))
 
 
-func spawn_rock(size, pos=null, vel=null) -> void:
+func spawn_rock(size, pos=null, vel=null):
 	if pos == null:
 		$RockPath/RockSpawn.progress = randi()
 		pos = $RockPath/RockSpawn.position
@@ -100,7 +94,7 @@ func spawn_rock(size, pos=null, vel=null) -> void:
 	r.exploded.connect(self._on_rock_exploded)
 
 
-func _on_rock_exploded(size, radius, pos, vel) -> void:
+func _on_rock_exploded(size, radius, pos, vel):
 	$ExplosionSound.play()
 	score += 10 * size
 	$HUD.update_score(score)
@@ -113,7 +107,7 @@ func _on_rock_exploded(size, radius, pos, vel) -> void:
 		spawn_rock(size - 1, newpos, newvel)
 
 
-func _on_enemy_timer_timeout() -> void:
+func _on_enemy_timer_timeout():
 	var e = enemy_scene.instantiate()
 	add_child(e)
 	e.target = $Player

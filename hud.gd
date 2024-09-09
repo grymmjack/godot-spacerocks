@@ -15,17 +15,17 @@ var bar_textures = {
 }
 
 
-func _ready() -> void:
+func _ready():
 	start_button.grab_focus()
 
 
-func show_message(text:String) -> void:
+func show_message(text):
 	message.text = text
 	message.show()
 	$Timer.start()
 
 
-func update_shield(value:float) -> void:
+func update_shield(value):
 	shield_bar.texture_progress = bar_textures["green"]
 	if value < 0.4:
 		shield_bar.texture_progress = bar_textures["red"]
@@ -34,7 +34,7 @@ func update_shield(value:float) -> void:
 	shield_bar.value = value
 
 
-func update_score(value:int) -> void:
+func update_score(value):
 	# Free guy every 150 points
 	if value % 150 == 0:
 		$MarginContainer/HBoxContainer/LivesCounter/L3.duplicate()
@@ -42,22 +42,22 @@ func update_score(value:int) -> void:
 	score_label.text = str(value)
 
 
-func update_lives(value:int) -> void:
+func update_lives(value):
 	for item in 3:
 		lives_counter[item].visible = value > item
 
 
-func game_over() -> void:
+func game_over():
 	show_message("Game Over")
 	await $Timer.timeout
 	start_button.show()
 
 
-func _on_start_button_pressed() -> void:
+func _on_start_button_pressed():
 	start_button.hide()
 	start_game.emit()
 
 
-func _on_timer_timeout() -> void:
+func _on_timer_timeout():
 	message.hide()
 	message.text = ""

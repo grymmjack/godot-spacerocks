@@ -2,13 +2,13 @@ extends RigidBody2D
 
 signal exploded
 
-var screensize:Vector2 = Vector2.ZERO
-var size:float
-var radius:float
-var scale_factor:float = 0.2
+var screensize = Vector2.ZERO
+var size
+var radius
+var scale_factor = 0.2
 
 
-func start(_position, _velocity, _size) -> void:
+func start(_position, _velocity, _size):
 	position = _position
 	size = _size
 	mass = 1.5 * size
@@ -22,14 +22,14 @@ func start(_position, _velocity, _size) -> void:
 	$Explosion.scale = Vector2.ONE * 0.75 * size
 
 
-func _integrate_forces(physics_state: PhysicsDirectBodyState2D) -> void:
+func _integrate_forces(physics_state):
 	var xform:Transform2D = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0 - radius, screensize.x + radius)
 	xform.origin.y = wrapf(xform.origin.y, 0 - radius, screensize.y + radius)
 	physics_state.transform = xform
 
 
-func explode() -> void:
+func explode():
 	$CollisionShape2D.set_deferred("disabled", true)
 	$Sprite2D.hide()
 	$Explosion/AnimationPlayer.play("explosion")

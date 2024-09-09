@@ -59,7 +59,7 @@ point_count = 2
 
 [node name="Enemy" type="Area2D" groups=["enemies"]]
 script = ExtResource("1_33kmr")
-bullet_scene = ExtResource("2_aqagt")
+enemy_bullet_scene = ExtResource("2_aqagt")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0, 0, 1)
