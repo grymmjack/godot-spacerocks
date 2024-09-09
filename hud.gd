@@ -2,11 +2,17 @@ extends Node
 
 signal start_game
 
-@onready var lives_counter = $MarginContainer/HBoxContainer/LivesCounter.get_children()
-@onready var score_label = $MarginContainer/HBoxContainer/ScoreLabel
+@export var life_scene : PackedScene
+
+@onready var lives_counter = $MarginContainer/VBoxContainer/HBoxContainer/LivesCounter.get_children()
+@onready var lives_container = $MarginContainer/VBoxContainer/HBoxContainer/LivesCounter
+@onready var score_label = $MarginContainer/VBoxContainer/HBoxContainer/ScoreLabel
 @onready var message = $VBoxContainer/Message
 @onready var start_button = $VBoxContainer/StartButton
-@onready var shield_bar = $MarginContainer/HBoxContainer/ShieldBar
+@onready var shield_bar = $MarginContainer/VBoxContainer/ShieldContainer/ShieldBar
+
+var free_guy_ready = true
+var prev_free_guy_score = 0
 
 var bar_textures = {
 	"green": preload("res://assets/bar_green_200.png"),
@@ -35,22 +41,42 @@ func update_shield(value):
 
 
 func update_score(value):
-	# Free guy every 150 points
-	if value % 150 == 0:
-		$MarginContainer/HBoxContainer/LivesCounter/L3.duplicate()
-		$FreeGuySound.play()
+	# Free guy every 1000 points
+	if $/root/Main/Player.lives + 1 <= 10:
+		if value >= 1000 and free_guy_ready:
+			if value % 1000 in range(0, 100):
+				prev_free_guy_score = value
+				free_guy_ready = false
+				printerr("FREE GUY - score %d" % value)
+				var l = life_scene.instantiate()
+				$MarginContainer/VBoxContainer/HBoxContainer/LivesCounter.add_child(l)
+				$/root/Main/FreeGuySound.play()
+				$/root/Main/Player.lives += 1
+				$FreeGuyTimer.stop()
+				$FreeGuyTimer.start()
 	score_label.text = str(value)
 
 
+func add_lives(value):
+	$/root/Main/Player.lives = value
+	for i in range(min(value, 10)):
+		var l = life_scene.instantiate()
+		lives_container.add_child(l)
+
+
 func update_lives(value):
-	for item in 3:
-		lives_counter[item].visible = value > item
+	var i = -1
+	for item in lives_container.get_children():
+		i += 1
+		item.visible = value > i
 
 
 func game_over():
 	show_message("Game Over")
 	await $Timer.timeout
 	start_button.show()
+	show_message("Space Rocks!")
+	$Timer.stop()
 
 
 func _on_start_button_pressed():
@@ -61,3 +87,8 @@ func _on_start_button_pressed():
 func _on_timer_timeout():
 	message.hide()
 	message.text = ""
+
+
+func _on_free_guy_timer_timeout() -> void:
+	if int(score_label.text) >= prev_free_guy_score:
+		free_guy_ready = true

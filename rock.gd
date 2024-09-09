@@ -1,3 +1,4 @@
+class_name rock
 extends RigidBody2D
 
 signal exploded
@@ -34,6 +35,23 @@ func explode():
 	$Sprite2D.hide()
 	$Explosion/AnimationPlayer.play("explosion")
 	$Explosion.show()
+	var rock_pitch = size
+	match size:
+		1:
+			rock_pitch = 2.0
+		2:
+			rock_pitch = 1.5
+		3:
+			rock_pitch = 0.75
+		4:
+			rock_pitch = 0.5
+		5:
+			rock_pitch = 0.4
+		6:
+			rock_pitch = 0.25
+		_:
+			rock_pitch = 1.0
+	$ExplosionSound.pitch_scale = randf_range(rock_pitch, rock_pitch+0.25)
 	$ExplosionSound.play()
 	exploded.emit(size, radius, position, linear_velocity)
 	linear_velocity = Vector2.ZERO

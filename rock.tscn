@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://co606jqflxw6m"]
+[gd_scene load_steps=7 format=3 uid="uid://co606jqflxw6m"]
 
 [ext_resource type="Script" path="res://rock.gd" id="1_k4q5k"]
 [ext_resource type="Texture2D" uid="uid://du2tg3ivq4nrv" path="res://assets/rock.png" id="2_oglcg"]
@@ -7,6 +7,9 @@
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0yq2p"]
 bounce = 1.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7kg1e"]
+radius = 66.1891
 
 [node name="Rock" type="RigidBody2D" groups=["rocks"]]
 physics_material_override = SubResource("PhysicsMaterial_0yq2p")
@@ -18,9 +21,11 @@ script = ExtResource("1_k4q5k")
 texture = ExtResource("2_oglcg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_7kg1e")
 
 [node name="Explosion" parent="." instance=ExtResource("3_ycowc")]
 visible = false
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pau43")
+volume_db = -3.0

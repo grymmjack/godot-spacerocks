@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dw4rodtlfvbum"]
+[gd_scene load_steps=16 format=3 uid="uid://dw4rodtlfvbum"]
 
 [ext_resource type="Script" path="res://enemy.gd" id="1_33kmr"]
 [ext_resource type="Texture2D" uid="uid://beebfko0lf32" path="res://assets/enemy_saucer.png" id="2_33gio"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://kmpikcjj43hc" path="res://enemy_paths.tscn" id="3_0hssg"]
 [ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://explosion.tscn" id="4_o1j2s"]
 [ext_resource type="AudioStream" uid="uid://ckckxicfxlddy" path="res://assets/sounds/explosion.wav" id="6_ktid2"]
+[ext_resource type="AudioStream" uid="uid://ca1nt3sflwsqr" path="res://assets/sounds/enemy_laser-2.wav" id="7_23t6s"]
 [ext_resource type="AudioStream" uid="uid://busvswxcmmqgv" path="res://assets/sounds/enemy_laser.wav" id="7_p0ykq"]
 [ext_resource type="Texture2D" uid="uid://ccu727xjtonl2" path="res://assets/corona.png" id="8_o4w2o"]
 
@@ -86,10 +87,12 @@ autostart = true
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_ktid2")
+volume_db = -3.0
 
 [node name="ShootSound" type="AudioStreamPlayer" parent="."]
 process_mode = 1
-stream = ExtResource("7_p0ykq")
+stream = ExtResource("7_23t6s")
+pitch_scale = 0.6
 
 [node name="LaserSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_p0ykq")

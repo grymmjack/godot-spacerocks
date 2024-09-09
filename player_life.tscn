@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cqead78vphyh6"]
+
+[ext_resource type="Texture2D" uid="uid://de8w1i6h36eun" path="res://assets/player_small.png" id="1_3ik23"]
+
+[node name="L1" type="TextureRect"]
+texture = ExtResource("1_3ik23")
+stretch_mode = 5

@@ -11,6 +11,8 @@ func start(_transform):
 
 
 func _process(delta):
+	if get_tree().paused:
+		return
 	position += velocity * delta
 
 

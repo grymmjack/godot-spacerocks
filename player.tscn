@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://player.gd" id="1_fpju5"]
 [ext_resource type="PackedScene" uid="uid://bgrmwgjf2vuc8" path="res://bullet.tscn" id="2_inuna"]
 [ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://explosion.tscn" id="4_27l8c"]
-[ext_resource type="AudioStream" uid="uid://d321t20kol6ry" path="res://assets/sounds/laser.ogg" id="5_ovaao"]
+[ext_resource type="AudioStream" uid="uid://cnikjbncbgpdp" path="res://assets/sounds/player_laser-2.wav" id="5_smyye"]
 [ext_resource type="AudioStream" uid="uid://dx8un04x32e0q" path="res://assets/sounds/engine.ogg" id="6_71o1i"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n5108"]
@@ -55,7 +55,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="LaserSound" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("5_ovaao")
+stream = ExtResource("5_smyye")
 
 [node name="EngineSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_71o1i")
@@ -79,6 +79,7 @@ scale_amount_curve = SubResource("Curve_gg8h5")
 color_ramp = SubResource("Gradient_8d61m")
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+volume_db = -3.0
 
 [connection signal="body_entered" from="." to="." method="_on_player_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]

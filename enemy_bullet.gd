@@ -8,11 +8,14 @@ func start(_pos, _dir):
 	rotation = _dir.angle()
 
 func _process(delta):
+	if get_tree().paused:
+		return
 	position += transform.x * speed * delta
 
 func _on_body_entered(body):
 	if body.name == "Player":
 		body.shield -= damage
+		$/root/Main/ExplosionSound.volume_db = -6
 		$/root/Main/ExplosionSound.play()
 	queue_free()
 

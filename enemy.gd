@@ -19,6 +19,8 @@ func _ready():
 
 
 func _physics_process(delta):
+	if get_tree().paused:
+		return
 	rotation += deg_to_rad(rotation_speed) * delta
 	follow.progress += speed * delta
 	position = follow.global_position
@@ -30,11 +32,14 @@ func _physics_process(delta):
 
 
 func shoot():
+	if get_tree().paused:
+		return
 	var dir = global_position.direction_to(target.global_position)
 	dir = dir.rotated(randf_range(-bullet_spread, bullet_spread))
 	var b = enemy_bullet_scene.instantiate()
 	get_tree().root.add_child(b)
 	b.start(global_position, dir)
+	$LaserSound.pitch_scale = randf_range(0.5, 2.5)
 	$LaserSound.play()
 
 func shoot_pulse(n, delay):
@@ -46,12 +51,16 @@ func shoot_pulse(n, delay):
 func take_damage(amount):
 	health -= amount
 	$AnimationPlayer.play("flash")
+	$ExplosionSound.volume_db = -6
+	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
 	if health <= 0:
 		explode()
 
 
 func explode():
+	$ExplosionSound.volume_db = 0
+	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
 	speed = 0
 	$GunCooldown.stop()
@@ -61,13 +70,15 @@ func explode():
 	$Explosion/AnimationPlayer.play("explosion")
 	$Explosion.scale = Vector2(5, 5)
 	await $Explosion/AnimationPlayer.animation_finished
-	$/root/Main.score += 25
+	$/root/Main.score += 250
 	$/root/Main/HUD.update_score($/root/Main.score)
 	queue_free()
 
 
 func _on_gun_cooldown_timeout():
 	var shot_type:int = randi_range(1, 6)
+	if $/root/Main/Player.lives >= 4:
+		shot_type = 6
 	if shot_type > 5:
 		shoot_pulse(3, 0.15)
 	else:

@@ -5,11 +5,11 @@ signal shield_changed
 signal dead
 
 @export var bullet_scene : PackedScene
-@export var engine_power = 500
-@export var spin_power = 8000
-@export var fire_rate = 0.25
+@export var engine_power = 800
+@export var spin_power = 4000
+@export var fire_rate = 0.18
 @export var max_shield = 100.0
-@export var shield_regen = 5.0
+@export var shield_regen = 3.0
 
 enum { INIT, ALIVE, INVULNERABLE, DEAD }
 var state = INIT
@@ -64,10 +64,12 @@ func _process(delta):
 	shield += shield_regen * delta
 
 
-func get_input(delta):
+func get_input(_delta):
+	if get_tree().paused:
+		return
 	$Exhaust.emitting = false
 	thrust = Vector2.ZERO
-	if state in [ DEAD, INIT ]:
+	if state in [ INIT, DEAD ]:
 		return
 	if Input.is_action_pressed("turbo_rotate"):
 		angular_damp *= 0.25
@@ -76,13 +78,17 @@ func get_input(delta):
 	else:
 		linear_damp = LINEAR_DAMP_NORMAL
 	if Input.is_action_pressed("thrust"):
+		$EngineSound.pitch_scale = randf_range(0.8, 1.5)
 		$EngineSound.volume_db = 0.0
 		thrust = transform.x * engine_power
+		if shield - 1 > 5:
+			shield -= 0.25
 		$Exhaust.emitting = true
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 		if Input.is_action_just_pressed("rotate_stop"):
 			rotation_dir = 0
 	else:
+		$EngineSound.pitch_scale = randf_range(0.8, 1.5)
 		$EngineSound.volume_db = -80.0
 	if Input.is_action_pressed("rotate_left"):
 		rotation_dir = -1
@@ -108,23 +114,32 @@ func set_shield(value):
 
 
 func shoot():
+	if get_tree().paused:
+		return
 	if state == INVULNERABLE:
 		return
 	can_shoot = false
+	if shield - 1 > 5:
+		shield -= 1
 	$GunCooldown.start()
 	var b = bullet_scene.instantiate()
 	b.name = "Player Bullet"
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
+	$LaserSound.pitch_scale = randf_range(0.5, 2.0)
 	$LaserSound.play()
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
+	if get_tree().paused:
+		return
 	constant_force = thrust
 	constant_torque = rotation_dir * spin_power
 
 
 func _integrate_forces(physics_state):
+	if get_tree().paused:
+		return
 	if reset_pos:
 		physics_state.transform.origin = screensize / 2
 		reset_pos = false
@@ -135,6 +150,10 @@ func _integrate_forces(physics_state):
 
 
 func set_lives(value):
+	var orig_value = value
+	# if getting a free guy don't set invulnerable
+	if orig_value == lives + 1:
+		return
 	lives = value
 	shield = max_shield
 	lives_changed.emit(lives)
@@ -180,7 +199,9 @@ func _on_player_body_entered(body):
 
 
 func explode() -> void:
+	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
+	$Explosion.scale = Vector2(10, 10)
 	$Explosion.show()
 	$Explosion/AnimationPlayer.play("explosion")
 	await $Explosion/AnimationPlayer.animation_finished
