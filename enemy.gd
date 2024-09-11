@@ -48,8 +48,8 @@ func shoot_pulse(n, delay):
 		await get_tree().create_timer(delay).timeout
 
 
-func take_damage(amount):
-	health -= amount
+func take_damage(amount, shot_level):
+	health -= amount + shot_level
 	$AnimationPlayer.play("flash")
 	$ExplosionSound.volume_db = -6
 	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
@@ -62,6 +62,7 @@ func explode():
 	$ExplosionSound.volume_db = 0
 	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
+	$EnemyDeathSound.play()
 	speed = 0
 	$GunCooldown.stop()
 	$CollisionShape2D.set_deferred("disabled", true)

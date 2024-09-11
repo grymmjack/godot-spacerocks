@@ -2,6 +2,7 @@ extends RigidBody2D
 
 signal lives_changed
 signal shield_changed
+signal charged_shot_changed
 signal dead
 
 @export var bullet_scene : PackedScene
@@ -10,13 +11,21 @@ signal dead
 @export var fire_rate = 0.18
 @export var max_shield = 100.0
 @export var shield_regen = 3.0
+@export var charged_shot_shield_regen = 1.0
+
+const SHOT_LEVEL_0_COST = 0.75
+const SHOT_LEVEL_1_COST = 10
+const SHOT_LEVEL_2_COST = 20
+const SHOT_LEVEL_3_COST = 30
 
 enum { INIT, ALIVE, INVULNERABLE, DEAD }
 var state = INIT
 var thrust = Vector2.ZERO
 var rotation_dir = 0.0
 var screensize = Vector2.ZERO
-var can_shoot: = true
+var can_shoot = true
+var shot_charging = false
+var shot_level = 0
 var reset_pos = false
 var lives = 0: set = set_lives
 var shield = 0: set = set_shield
@@ -61,7 +70,10 @@ func change_state(new_state):
 
 func _process(delta):
 	get_input(delta)
-	shield += shield_regen * delta
+	if shot_charging:
+		shield += charged_shot_shield_regen * delta
+	else:
+		shield += shield_regen * delta
 
 
 func get_input(_delta):
@@ -82,7 +94,7 @@ func get_input(_delta):
 		$EngineSound.volume_db = 0.0
 		thrust = transform.x * engine_power
 		if shield - 1 > 5:
-			shield -= 0.25
+			shield -= 0.1
 		$Exhaust.emitting = true
 		rotation_dir = Input.get_axis("rotate_left", "rotate_right")
 		if Input.is_action_just_pressed("rotate_stop"):
@@ -100,8 +112,61 @@ func get_input(_delta):
 		rotation_iterations = 0
 	if Input.is_action_just_released("rotate_stop"):
 		linear_damp = LINEAR_DAMP_NORMAL
-	if Input.is_action_pressed("shoot") and can_shoot:
+	# shoot logic
+	if Input.is_action_just_pressed("shoot"):
+		if $ChargedShotLevel1Timer.is_stopped:
+			shoot()
+			if shield >= SHOT_LEVEL_1_COST:
+				$ChargedShotLevel1Timer.start()
+				shot_charging = true
+		else:
+			printerr("ATTEMPTED TO CHARGE SHOT WHEN NOT ENOUGH SHIELD")
+			shoot()
+			shot_charging = false
+	if Input.is_action_just_released("shoot") and can_shoot:
 		shoot()
+		$ChargedShotLevel1Timer.stop()
+		$ChargedShotLevel2Timer.stop()
+		$ChargedShotLevel3Timer.stop()
+		update_shot_level()
+		shot_charging = false
+
+
+func update_shot_level():
+	charged_shot_changed.emit(shot_level)
+
+
+func set_shot_level_1():
+	if Input.is_action_pressed("shoot"):
+		shot_charging = true
+		shot_level = 1
+		$ChargedShotLevel1Sound.play()
+		$ChargedShotLevel1Timer.stop()
+		update_shot_level()
+		if shield >= SHOT_LEVEL_2_COST:
+			$ChargedShotLevel2Timer.start()
+		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
+
+
+func set_shot_level_2():
+	if Input.is_action_pressed("shoot"):
+		shot_level = 2
+		$ChargedShotLevel2Sound.play()
+		$ChargedShotLevel2Timer.stop()
+		update_shot_level()
+		if shield >= SHOT_LEVEL_3_COST:
+			$ChargedShotLevel3Timer.start()
+		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
+
+
+func set_shot_level_3():
+	if Input.is_action_pressed("shoot"):
+		shot_level = 3
+		shot_charging = false
+		update_shot_level()
+		$ChargedShotLevel3Sound.play()
+		$ChargedShotLevel3Timer.stop()
+		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
 
 
 func set_shield(value):
@@ -114,20 +179,39 @@ func set_shield(value):
 
 
 func shoot():
+	printerr("SHOOTING - CHARGING: %s - LEVEL: %d" % [ shot_charging, shot_level ])
 	if get_tree().paused:
 		return
 	if state == INVULNERABLE:
 		return
 	can_shoot = false
-	if shield - 1 > 5:
-		shield -= 1
+	var shield_cost = 1
+	var pitch_scale = 1.0
+	match shot_level:
+		0:
+			shield_cost = SHOT_LEVEL_0_COST
+			pitch_scale = 1.0
+		1:
+			shield_cost = SHOT_LEVEL_1_COST
+			pitch_scale = 0.8
+		2:
+			shield_cost = SHOT_LEVEL_2_COST
+			pitch_scale = 0.5
+		3:
+			shield_cost = SHOT_LEVEL_3_COST
+			pitch_scale = 0.25
+	if shield - shield_cost > 5:
+		shield -= shield_cost
 	$GunCooldown.start()
 	var b = bullet_scene.instantiate()
 	b.name = "Player Bullet"
+	b.get_node("Sprite2D").scale = Vector2(shot_level+0.5, 0.5)
+	b.shot_level = shot_level
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
-	$LaserSound.pitch_scale = randf_range(0.5, 2.0)
+	$LaserSound.pitch_scale = pitch_scale
 	$LaserSound.play()
+	shot_level = 0
 
 
 func _physics_process(_delta):
@@ -154,12 +238,19 @@ func set_lives(value):
 	# if getting a free guy don't set invulnerable
 	if orig_value == lives + 1:
 		return
-	lives = value
-	shield = max_shield
-	lives_changed.emit(lives)
 	if lives <= 0:
+		lives = value
+		lives_changed.emit(lives)
+		shot_level = 0
+		shot_charging = false
+		update_shot_level()
 		change_state(DEAD)
 	else:
+		lives = value
+		lives_changed.emit(lives)
+		shot_level = 0
+		shot_charging = false
+		update_shot_level()
 		change_state(INVULNERABLE)
 
 
@@ -195,12 +286,13 @@ func _on_invulnerability_timer_timeout():
 func _on_player_body_entered(body):
 	if body.is_in_group("rocks"):
 		shield -= body.size * 25
-		body.explode()
+		body.explode(1)
 
 
 func explode() -> void:
 	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
+	$PlayerDeathSound.play()
 	$Explosion.scale = Vector2(10, 10)
 	$Explosion.show()
 	$Explosion/AnimationPlayer.play("explosion")

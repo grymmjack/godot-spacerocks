@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dw4rodtlfvbum"]
+[gd_scene load_steps=17 format=3 uid="uid://dw4rodtlfvbum"]
 
 [ext_resource type="Script" path="res://enemy.gd" id="1_33kmr"]
 [ext_resource type="Texture2D" uid="uid://beebfko0lf32" path="res://assets/enemy_saucer.png" id="2_33gio"]
@@ -9,6 +9,7 @@
 [ext_resource type="AudioStream" uid="uid://ca1nt3sflwsqr" path="res://assets/sounds/enemy_laser-2.wav" id="7_23t6s"]
 [ext_resource type="AudioStream" uid="uid://busvswxcmmqgv" path="res://assets/sounds/enemy_laser.wav" id="7_p0ykq"]
 [ext_resource type="Texture2D" uid="uid://ccu727xjtonl2" path="res://assets/corona.png" id="8_o4w2o"]
+[ext_resource type="AudioStream" uid="uid://gup5ob6ub8pr" path="res://assets/sounds/enemy_death.wav" id="10_fu2oc"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2eyjf"]
 radius = 37.0
@@ -108,6 +109,9 @@ gravity = Vector2(0, 0)
 scale_amount_min = 0.1
 scale_amount_max = 0.1
 scale_amount_curve = SubResource("Curve_58evp")
+
+[node name="EnemyDeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_fu2oc")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]

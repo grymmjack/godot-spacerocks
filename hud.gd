@@ -10,8 +10,10 @@ signal start_game
 @onready var message = $VBoxContainer/Message
 @onready var start_button = $VBoxContainer/StartButton
 @onready var shield_bar = $MarginContainer/VBoxContainer/ShieldContainer/ShieldBar
+@onready var charged_shot_bar = $MarginContainer/VBoxContainer/ChargeShotContainer/ChargedShotBar
 
 var free_guy_ready = true
+var shot_level = 0 : set = update_charged_shot
 var prev_free_guy_score = 0
 
 var bar_textures = {
@@ -29,6 +31,24 @@ func show_message(text):
 	message.text = text
 	message.show()
 	$Timer.start()
+
+
+func update_charged_shot(value):
+	shot_level = value
+	printerr("UPDATE CHARGED SHOT: %d / %d" % [ value, shot_level ])
+	var original_tint = charged_shot_bar.tint_over
+	print(original_tint)
+	var tw = get_tree().root.create_tween()
+	tw.set_parallel(false)
+	tw.tween_property(charged_shot_bar, "tint_over", Color(1.0, 1.0, 1.0, 1.0), 0.3)
+	tw.play()
+	await tw.finished
+	tw.stop()
+	tw.tween_property(charged_shot_bar, "tint_over", original_tint, 0.3)
+	tw.play()
+	await tw.finished
+	tw.stop()
+	charged_shot_bar.value = shot_level
 
 
 func update_shield(value):
@@ -52,6 +72,7 @@ func update_score(value):
 				$MarginContainer/VBoxContainer/HBoxContainer/LivesCounter.add_child(l)
 				$/root/Main/FreeGuySound.play()
 				$/root/Main/Player.lives += 1
+				$/root/Main/Player.shield += 50
 				$FreeGuyTimer.stop()
 				$FreeGuyTimer.start()
 	score_label.text = str(value)

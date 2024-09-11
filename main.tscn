@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dl3podg65ie5x"]
+[gd_scene load_steps=15 format=3 uid="uid://dl3podg65ie5x"]
 
 [ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
 [ext_resource type="Script" path="res://main.gd" id="1_eyvbe"]
@@ -10,6 +10,9 @@
 [ext_resource type="AudioStream" uid="uid://q7hmfuheyie6" path="res://assets/sounds/levelup.ogg" id="8_twjxo"]
 [ext_resource type="AudioStream" uid="uid://1jfv7jitycu6" path="res://assets/sounds/Funky-Gameplay_Looping.ogg" id="9_7rs3o"]
 [ext_resource type="AudioStream" uid="uid://ci85hkkafofqu" path="res://assets/sounds/free-guy.wav" id="10_mcsfu"]
+[ext_resource type="AudioStream" uid="uid://b6ta3asm50yn4" path="res://assets/sounds/charged_shot_level_1_explode.wav" id="11_ngw7h"]
+[ext_resource type="AudioStream" uid="uid://y4w83s0j1ud1" path="res://assets/sounds/charged_shot_level_2_explode.wav" id="12_33bcy"]
+[ext_resource type="AudioStream" uid="uid://cl4usq4dgww6i" path="res://assets/sounds/charge_shot_level_3_explode.wav" id="13_pjebt"]
 
 [sub_resource type="Curve2D" id="Curve2D_log48"]
 _data = {
@@ -58,6 +61,16 @@ volume_db = -2.0
 stream = ExtResource("10_mcsfu")
 pitch_scale = 0.5
 
+[node name="ChargedShotLevel1ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_ngw7h")
+
+[node name="ChargedShotLevel2ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_33bcy")
+
+[node name="ChargedShotLevel3ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_pjebt")
+
+[connection signal="charged_shot_changed" from="Player" to="." method="_on_player_charged_shot_changed"]
 [connection signal="dead" from="Player" to="." method="game_over"]
 [connection signal="lives_changed" from="Player" to="HUD" method="update_lives"]
 [connection signal="shield_changed" from="Player" to="HUD" method="update_shield"]

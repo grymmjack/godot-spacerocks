@@ -66,6 +66,10 @@ func new_game():
 	$HUD.show_message("Get Ready!")
 	await $HUD/Timer.timeout
 	playing = true
+	$Player.shot_charging = false
+	$Player.shot_level = 0
+	$Player.update_shot_level()
+	$Player.shield = $Player.max_shield
 	$Music.play()
 
 
@@ -73,6 +77,7 @@ func new_level():
 	$LevelupSound.play()
 	$EnemyTimer.start(randf_range(5, 10))
 	level += 1
+	$Player.shield += 25
 	$HUD.show_message("Wave %s" % level)
 	roll_rocks()
 
@@ -121,17 +126,33 @@ func spawn_rock(size, pos=null, vel=null):
 	r.exploded.connect(self._on_rock_exploded)
 
 
-func _on_rock_exploded(size, radius, pos, vel):
+func _on_rock_exploded(size, radius, pos, vel, shot_level):
 	score += 10 * size
 	$/root/Main/Player.shield += 1
 	$HUD.update_score(score)
 	if size <= 1:
 		return
-	for offset in [ -1, 1 ]:
-		var dir = $Player.position.direction_to(pos).orthogonal() * offset
-		var newpos = pos + dir * radius
-		var newvel = dir * vel.length() * 1.1
-		spawn_rock(size - 1, newpos, newvel)
+	printerr("_on_rock_exploded SHOT LEVEL: %d" % shot_level)
+	match shot_level:
+		0,1:
+			for offset in [ -1, 1 ]:
+				var dir = $Player.position.direction_to(pos).orthogonal() * offset
+				var newpos = pos + dir * radius
+				var newvel = dir * vel.length() * 1.1
+				spawn_rock(size - 1, newpos, newvel)
+		1:
+				$ChargedShotLevel1ExplodeSound.play()
+		2:
+			for offset in [ 1 ]:
+				var dir = $Player.position.direction_to(pos).orthogonal() * offset
+				var newpos = pos + dir * radius
+				var newvel = dir * vel.length() * 1.1
+				if size - 2 > 1:
+					$ChargedShotLevel2ExplodeSound.play()
+					spawn_rock(size - 2, newpos, newvel)
+		3:
+			$ChargedShotLevel3ExplodeSound.play()
+			printerr("ROCK DESTROYED!")
 
 
 func _on_enemy_timer_timeout():
@@ -142,3 +163,7 @@ func _on_enemy_timer_timeout():
 		add_child(e)
 		e.target = $Player
 		$EnemyTimer.start(randf_range(20, 40))
+
+
+func _on_player_charged_shot_changed(shot_level):
+	$/root/Main/HUD.shot_level = shot_level
