@@ -91,11 +91,10 @@ wait_time = 0.5
 one_shot = true
 
 [node name="ChargedShotLevel2Timer" type="Timer" parent="."]
-wait_time = 2.0
 one_shot = true
 
 [node name="ChargedShotLevel3Timer" type="Timer" parent="."]
-wait_time = 3.0
+wait_time = 1.5
 one_shot = true
 
 [node name="ChargedShotLevel1Sound" type="AudioStreamPlayer" parent="."]

@@ -2,6 +2,7 @@ extends Node
 
 @export var rock_scene : PackedScene
 @export var enemy_scene : PackedScene
+@export var screen_fx : PackedScene
 
 var screensize = Vector2.ZERO
 var level = 0
@@ -48,7 +49,8 @@ func game_over():
 	playing = false
 	$HUD.game_over()
 	$Music.stop()
-	$/root/Main/Player.state = $/root/Main/Player.INIT
+	$Player/PlayerDeathSound.play()
+	$Player.state = $Player.INIT
 
 
 func new_game():
@@ -66,10 +68,6 @@ func new_game():
 	$HUD.show_message("Get Ready!")
 	await $HUD/Timer.timeout
 	playing = true
-	$Player.shot_charging = false
-	$Player.shot_level = 0
-	$Player.update_shot_level()
-	$Player.shield = $Player.max_shield
 	$Music.play()
 
 
@@ -127,22 +125,25 @@ func spawn_rock(size, pos=null, vel=null):
 
 
 func _on_rock_exploded(size, radius, pos, vel, shot_level):
-	score += 10 * size
-	$/root/Main/Player.shield += 1
+	$Player.shield += 1
 	$HUD.update_score(score)
 	if size <= 1:
 		return
-	printerr("_on_rock_exploded SHOT LEVEL: %d" % shot_level)
 	match shot_level:
 		0,1:
+			score += 10 * size
 			for offset in [ -1, 1 ]:
 				var dir = $Player.position.direction_to(pos).orthogonal() * offset
 				var newpos = pos + dir * radius
 				var newvel = dir * vel.length() * 1.1
 				spawn_rock(size - 1, newpos, newvel)
 		1:
+				score += 15 * size
+				$Player.shield += 5
 				$ChargedShotLevel1ExplodeSound.play()
 		2:
+			score += 25 * size
+			$Player.shield += 10
 			for offset in [ 1 ]:
 				var dir = $Player.position.direction_to(pos).orthogonal() * offset
 				var newpos = pos + dir * radius
@@ -151,8 +152,9 @@ func _on_rock_exploded(size, radius, pos, vel, shot_level):
 					$ChargedShotLevel2ExplodeSound.play()
 					spawn_rock(size - 2, newpos, newvel)
 		3:
+			score += 40 * size
+			$Player.shield = $Player.max_shield
 			$ChargedShotLevel3ExplodeSound.play()
-			printerr("ROCK DESTROYED!")
 
 
 func _on_enemy_timer_timeout():
@@ -166,4 +168,4 @@ func _on_enemy_timer_timeout():
 
 
 func _on_player_charged_shot_changed(shot_level):
-	$/root/Main/HUD.shot_level = shot_level
+	$HUD.shot_level = shot_level

@@ -35,20 +35,18 @@ func show_message(text):
 
 func update_charged_shot(value):
 	shot_level = value
-	printerr("UPDATE CHARGED SHOT: %d / %d" % [ value, shot_level ])
-	var original_tint = charged_shot_bar.tint_over
-	print(original_tint)
 	var tw = get_tree().root.create_tween()
 	tw.set_parallel(false)
 	tw.tween_property(charged_shot_bar, "tint_over", Color(1.0, 1.0, 1.0, 1.0), 0.3)
+	tw.tween_property(charged_shot_bar, "value", shot_level, 0.3)
 	tw.play()
 	await tw.finished
 	tw.stop()
-	tw.tween_property(charged_shot_bar, "tint_over", original_tint, 0.3)
+	tw.tween_property(charged_shot_bar, "tint_over", Color(0.5, 0.5, 0.5, 1.0), 0.3)
 	tw.play()
 	await tw.finished
 	tw.stop()
-	charged_shot_bar.value = shot_level
+	#charged_shot_bar.value = shot_level
 
 
 func update_shield(value):
@@ -67,7 +65,6 @@ func update_score(value):
 			if value % 1000 in range(0, 100):
 				prev_free_guy_score = value
 				free_guy_ready = false
-				printerr("FREE GUY - score %d" % value)
 				var l = life_scene.instantiate()
 				$MarginContainer/VBoxContainer/HBoxContainer/LivesCounter.add_child(l)
 				$/root/Main/FreeGuySound.play()
@@ -96,6 +93,7 @@ func game_over():
 	show_message("Game Over")
 	await $Timer.timeout
 	start_button.show()
+	start_button.grab_focus()
 	show_message("Space Rocks!")
 	$Timer.stop()
 

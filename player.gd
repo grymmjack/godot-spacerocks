@@ -58,6 +58,8 @@ func change_state(new_state):
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
 			$InvulnerabilityTimer.start()
+			shot_charging = false
+			update_shot_level(0)
 			state = INVULNERABLE
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
@@ -120,53 +122,52 @@ func get_input(_delta):
 				$ChargedShotLevel1Timer.start()
 				shot_charging = true
 		else:
-			printerr("ATTEMPTED TO CHARGE SHOT WHEN NOT ENOUGH SHIELD")
+			if shield <= SHOT_LEVEL_1_COST:
+				fail_charged_shot()
 			shoot()
 			shot_charging = false
 	if Input.is_action_just_released("shoot") and can_shoot:
-		shoot()
 		$ChargedShotLevel1Timer.stop()
 		$ChargedShotLevel2Timer.stop()
 		$ChargedShotLevel3Timer.stop()
-		update_shot_level()
+		shoot()
 		shot_charging = false
 
 
-func update_shot_level():
+func fail_charged_shot():
+	$ChargedShotFailSound.play()
+
+
+func update_shot_level(value):
+	shot_level = value
 	charged_shot_changed.emit(shot_level)
 
 
 func set_shot_level_1():
 	if Input.is_action_pressed("shoot"):
 		shot_charging = true
-		shot_level = 1
 		$ChargedShotLevel1Sound.play()
 		$ChargedShotLevel1Timer.stop()
-		update_shot_level()
+		update_shot_level(1)
 		if shield >= SHOT_LEVEL_2_COST:
 			$ChargedShotLevel2Timer.start()
-		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
 
 
 func set_shot_level_2():
 	if Input.is_action_pressed("shoot"):
-		shot_level = 2
 		$ChargedShotLevel2Sound.play()
 		$ChargedShotLevel2Timer.stop()
-		update_shot_level()
+		update_shot_level(2)
 		if shield >= SHOT_LEVEL_3_COST:
 			$ChargedShotLevel3Timer.start()
-		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
 
 
 func set_shot_level_3():
 	if Input.is_action_pressed("shoot"):
-		shot_level = 3
 		shot_charging = false
-		update_shot_level()
+		update_shot_level(3)
 		$ChargedShotLevel3Sound.play()
 		$ChargedShotLevel3Timer.stop()
-		printerr("SHOT CHARGING: %s - CHARGED SHOT: %d" % [ shot_charging, shot_level ])
 
 
 func set_shield(value):
@@ -179,7 +180,6 @@ func set_shield(value):
 
 
 func shoot():
-	printerr("SHOOTING - CHARGING: %s - LEVEL: %d" % [ shot_charging, shot_level ])
 	if get_tree().paused:
 		return
 	if state == INVULNERABLE:
@@ -187,6 +187,7 @@ func shoot():
 	can_shoot = false
 	var shield_cost = 1
 	var pitch_scale = 1.0
+	var bullet_scale = Vector2.ONE/2
 	match shot_level:
 		0:
 			shield_cost = SHOT_LEVEL_0_COST
@@ -194,24 +195,27 @@ func shoot():
 		1:
 			shield_cost = SHOT_LEVEL_1_COST
 			pitch_scale = 0.8
+			bullet_scale = Vector2.ONE/2 * 2
 		2:
 			shield_cost = SHOT_LEVEL_2_COST
 			pitch_scale = 0.5
+			bullet_scale = Vector2.ONE/2 * 3
 		3:
 			shield_cost = SHOT_LEVEL_3_COST
 			pitch_scale = 0.25
+			bullet_scale = Vector2.ONE/2 * 4
 	if shield - shield_cost > 5:
 		shield -= shield_cost
 	$GunCooldown.start()
 	var b = bullet_scene.instantiate()
 	b.name = "Player Bullet"
-	b.get_node("Sprite2D").scale = Vector2(shot_level+0.5, 0.5)
+	b.get_node("Sprite2D").scale = bullet_scale
 	b.shot_level = shot_level
 	get_tree().root.add_child(b)
 	b.start($Muzzle.global_transform)
 	$LaserSound.pitch_scale = pitch_scale
 	$LaserSound.play()
-	shot_level = 0
+	update_shot_level(0)
 
 
 func _physics_process(_delta):
@@ -238,19 +242,16 @@ func set_lives(value):
 	# if getting a free guy don't set invulnerable
 	if orig_value == lives + 1:
 		return
+	lives = value
+	shield = max_shield
+	lives_changed.emit(lives)
 	if lives <= 0:
-		lives = value
-		lives_changed.emit(lives)
-		shot_level = 0
 		shot_charging = false
-		update_shot_level()
+		update_shot_level(0)
 		change_state(DEAD)
 	else:
-		lives = value
-		lives_changed.emit(lives)
-		shot_level = 0
 		shot_charging = false
-		update_shot_level()
+		update_shot_level(0)
 		change_state(INVULNERABLE)
 
 
@@ -258,8 +259,10 @@ func reset():
 	reset_pos = true
 	$Sprite2D.show()
 	lives = 3
-	change_state(ALIVE)
+	shot_charging = false
+	update_shot_level(0)
 	shield = max_shield
+	change_state(ALIVE)
 
 
 func _on_gun_cooldown_timeout():
@@ -292,7 +295,6 @@ func _on_player_body_entered(body):
 func explode() -> void:
 	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
-	$PlayerDeathSound.play()
 	$Explosion.scale = Vector2(10, 10)
 	$Explosion.show()
 	$Explosion/AnimationPlayer.play("explosion")

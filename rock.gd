@@ -34,8 +34,6 @@ func _integrate_forces(physics_state):
 func explode(magnitude):
 	$CollisionShape2D.set_deferred("disabled", true)
 	$Sprite2D.hide()
-	$Explosion/AnimationPlayer.play("explosion")
-	$Explosion.show()
 	var explode_scale = Vector2.ONE
 	var rock_pitch = size
 	match size:
@@ -62,11 +60,13 @@ func explode(magnitude):
 	if magnitude == 1:
 		rock_pitch = 0.25
 		explode_scale = Vector2(2.0, 2.0)
+	$Explosion.scale = explode_scale
+	$Explosion.show()
+	$Explosion/AnimationPlayer.play("explosion")
 	$ExplosionSound.pitch_scale = randf_range(rock_pitch, rock_pitch+0.25)
 	$ExplosionSound.play()
 	exploded.emit(size, radius, position, linear_velocity, shot_level)
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0
-	$Explosion.scale = explode_scale
 	await $Explosion/AnimationPlayer.animation_finished
 	queue_free()

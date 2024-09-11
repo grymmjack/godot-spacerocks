@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dl3podg65ie5x"]
+[gd_scene load_steps=16 format=3 uid="uid://dl3podg65ie5x"]
 
 [ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
 [ext_resource type="Script" path="res://main.gd" id="1_eyvbe"]
@@ -14,6 +14,19 @@
 [ext_resource type="AudioStream" uid="uid://y4w83s0j1ud1" path="res://assets/sounds/charged_shot_level_2_explode.wav" id="12_33bcy"]
 [ext_resource type="AudioStream" uid="uid://cl4usq4dgww6i" path="res://assets/sounds/charge_shot_level_3_explode.wav" id="13_pjebt"]
 
+[sub_resource type="PackedScene" id="PackedScene_oacvs"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("CanvasLayer", "ColorRect", "offset_right", "offset_bottom"),
+"node_count": 2,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 0, 0, -1, 0, 0, 0, 0, 1, 1, -1, 2, 2, 0, 3, 1, 0),
+"variants": [1680.0, 1050.0],
+"version": 3
+}
+
 [sub_resource type="Curve2D" id="Curve2D_log48"]
 _data = {
 "points": PackedVector2Array(0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 1088, 128, 0, 0, 0, 0, 1088, 640, 0, 0, 0, 0, 64, 640, 0, 0, 0, 0, 64, 128)
@@ -25,10 +38,11 @@ process_mode = 3
 script = ExtResource("1_eyvbe")
 rock_scene = ExtResource("2_lrp2b")
 enemy_scene = ExtResource("3_4y3id")
+screen_fx = SubResource("PackedScene_oacvs")
 
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(576, 324)
-scale = Vector2(0.6, 0.6)
+position = Vector2(840, 524)
+scale = Vector2(0.875, 0.97037)
 texture = ExtResource("1_aygtu")
 
 [node name="Player" parent="." instance=ExtResource("2_eu3xu")]
