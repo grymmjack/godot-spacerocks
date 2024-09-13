@@ -89,6 +89,10 @@ func update_lives(value):
 		item.visible = value > i
 
 
+func update_wave(value):
+	$MarginContainer/VBoxContainer/HBoxContainer/WaveLabel.text = "WAVE %d" % value
+
+
 func game_over():
 	show_message("Game Over")
 	await $Timer.timeout

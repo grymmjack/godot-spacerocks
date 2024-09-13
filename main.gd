@@ -60,7 +60,8 @@ func new_game():
 	get_tree().call_group("rocks", "queue_free")
 	# remove any old enemies from previous game
 	get_tree().call_group("enemies", "queue_free")
-	level = 1
+	level = 0
+	$HUD.update_wave(level)
 	score = 0
 	$HUD.update_score(score)
 	$HUD.add_lives(3)
@@ -75,6 +76,7 @@ func new_level():
 	$LevelupSound.play()
 	$EnemyTimer.start(randf_range(5, 10))
 	level += 1
+	$HUD.update_wave(level)
 	$Player.shield += 25
 	$HUD.show_message("Wave %s" % level)
 	roll_rocks()
