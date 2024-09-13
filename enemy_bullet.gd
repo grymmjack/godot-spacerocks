@@ -1,7 +1,7 @@
 extends Area2D
 
 @export var speed = 800
-@export var damage = 25
+@export var damage = 35
 
 func start(_pos, _dir):
 	position = _pos

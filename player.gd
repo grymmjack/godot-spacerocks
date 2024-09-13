@@ -51,9 +51,6 @@ func change_state(new_state):
 			$Sprite2D.modulate.a = 0.5
 			$ShieldOrb.modulate.a = 0.5
 			state = INIT
-			update_shot_level(0)
-			if $/root/Main/EnemyTimer.is_stopped:
-				$/root/Main/EnemyTimer.start()
 		ALIVE:
 			$CollisionShape2D.set_deferred("disabled", false)
 			$Sprite2D.modulate.a = 1.0

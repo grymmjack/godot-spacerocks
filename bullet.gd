@@ -38,7 +38,9 @@ func _on_bullet_body_entered(body):
 func _on_area_entered(area):
 	if area.is_in_group("enemies"):
 		area.take_damage(1, shot_level)
-		queue_free()
+		# pierce if shot level 2, or 3
+		if shot_level <= 1:
+			queue_free()
 
 
 func _on_visible_on_screen_notifier_2d_screen_exited() -> void:
