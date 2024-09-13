@@ -177,7 +177,7 @@ func set_shot_level_3():
 func set_shield(value):
 	value = min(value, max_shield)
 	shield = value
-	$ShieldOrb.material.set("shader_parameter/alpha", value/100/2)
+	$ShieldOrb.material.set("shader_parameter/alpha", value/100)
 	shield_changed.emit(shield / max_shield)
 	if shield <= 0:
 		lives -= 1
