@@ -1,9 +1,11 @@
-[gd_scene load_steps=15 format=3 uid="uid://cbgmv7h00ij4f"]
+[gd_scene load_steps=18 format=3 uid="uid://cbgmv7h00ij4f"]
 
 [ext_resource type="Texture2D" uid="uid://byjlamtq07vga" path="res://assets/player_ship.png" id="1_6ek3v"]
 [ext_resource type="Script" path="res://player.gd" id="1_fpju5"]
 [ext_resource type="PackedScene" uid="uid://bgrmwgjf2vuc8" path="res://bullet.tscn" id="2_inuna"]
 [ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://explosion.tscn" id="4_27l8c"]
+[ext_resource type="Shader" path="res://wobbly.gdshader" id="4_uy431"]
+[ext_resource type="Texture2D" uid="uid://coaybfgo7c12s" path="res://assets/player_ship_shield.png" id="4_xdeo1"]
 [ext_resource type="AudioStream" uid="uid://cnikjbncbgpdp" path="res://assets/sounds/player_laser-2.wav" id="5_smyye"]
 [ext_resource type="AudioStream" uid="uid://dx8un04x32e0q" path="res://assets/sounds/engine.ogg" id="6_71o1i"]
 [ext_resource type="AudioStream" uid="uid://bqe1q27f204pf" path="res://assets/sounds/charged_shot_level_1.wav" id="7_3215m"]
@@ -11,6 +13,23 @@
 [ext_resource type="AudioStream" uid="uid://drc2361xyfjhd" path="res://assets/sounds/charged_shot_level_3.wav" id="9_cvyoo"]
 [ext_resource type="AudioStream" uid="uid://cc0ahtpurudch" path="res://assets/sounds/charge_fail.wav" id="10_gyh7t"]
 [ext_resource type="AudioStream" uid="uid://bbib0aevane46" path="res://assets/sounds/player_death.wav" id="11_83exv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ksur"]
+shader = ExtResource("4_uy431")
+shader_parameter/alpha = 0.5
+shader_parameter/alpha_tresh = 0.0
+shader_parameter/shrink = 2.0
+shader_parameter/offset_mul = 2.0
+shader_parameter/coff_angle = 0.0
+shader_parameter/coff_mul = 0.0
+shader_parameter/coff_std = 0.0
+shader_parameter/amp1 = 0.05
+shader_parameter/freq1 = 25.0
+shader_parameter/speed1 = 0.01
+shader_parameter/amp2 = 0.07
+shader_parameter/freq2 = 13.0
+shader_parameter/speed2 = 20.0
+shader_parameter/cols = ExtResource("4_xdeo1")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n5108"]
 radius = 62.0322
@@ -36,7 +55,14 @@ rotation = 1.5708
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("1_6ek3v")
 
+[node name="ShieldOrb" type="Sprite2D" parent="."]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_8ksur")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_xdeo1")
+
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 rotation = 1.5708
 scale = Vector2(0.5, 0.5)
 shape = SubResource("CircleShape2D_n5108")

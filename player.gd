@@ -10,8 +10,8 @@ signal dead
 @export var spin_power = 4000
 @export var fire_rate = 0.18
 @export var max_shield = 100.0
-@export var shield_regen = 3.0
-@export var charged_shot_shield_regen = 1.0
+@export var shield_regen = 5.0
+@export var charged_shot_shield_regen = 2.5
 
 const SHOT_LEVEL_0_COST = 0.75
 const SHOT_LEVEL_1_COST = 10
@@ -49,13 +49,16 @@ func change_state(new_state):
 		INIT:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
+			$ShieldOrb.modulate.a = 0.5
 			state = INIT
 		ALIVE:
 			$CollisionShape2D.set_deferred("disabled", false)
 			$Sprite2D.modulate.a = 1.0
+			$Sprite2D.show()
+			$ShieldOrb.show()
 			state = ALIVE
 		INVULNERABLE:
-			#$CollisionShape2D.set_deferred("disabled", true)
+			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
 			$InvulnerabilityTimer.start()
 			shot_charging = false
@@ -64,6 +67,7 @@ func change_state(new_state):
 		DEAD:
 			$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.hide()
+			$ShieldOrb.hide()
 			$EngineSound.volume_db = -80
 			linear_velocity = Vector2.ZERO
 			dead.emit()
@@ -173,6 +177,7 @@ func set_shot_level_3():
 func set_shield(value):
 	value = min(value, max_shield)
 	shield = value
+	$ShieldOrb.material.set("shader_parameter/alpha", value/100/2)
 	shield_changed.emit(shield / max_shield)
 	if shield <= 0:
 		lives -= 1
@@ -294,7 +299,10 @@ func _on_invulnerability_timer_timeout():
 func _on_player_body_entered(body):
 	if body.is_in_group("rocks"):
 		if state != INVULNERABLE:
-			shield -= body.size * 25
+			if body.size * 15 >= 100:
+				shield = 5
+			else:
+				shield -= body.size * 15
 		body.explode(10)
 
 
@@ -303,6 +311,7 @@ func explode() -> void:
 	$ExplosionSound.pitch_scale = randf_range(0.5, 2.0)
 	$ExplosionSound.play()
 	$Explosion.scale = Vector2(10, 10)
+	$ShieldOrb.hide()
 	$Explosion.show()
 	$Explosion/AnimationPlayer.play("explosion")
 	await $Explosion/AnimationPlayer.animation_finished
