@@ -36,18 +36,22 @@ func show_message(text):
 func update_charged_shot(value):
 	shot_level = value
 	var tw = get_tree().root.create_tween()
-	tw.set_parallel(false)
-	tw.tween_property(charged_shot_bar, "tint_over", Color(1.0, 1.0, 1.0, 1.0), 0.3)
-	tw.tween_property(charged_shot_bar, "value", shot_level, 0.3)
+	tw.set_parallel(true)
+	tw.tween_property(charged_shot_bar, "tint_over", Color(1.0, 1.0, 1.0, 1.0), 0.2)
+	tw.chain().tween_property(charged_shot_bar, "value", shot_level, 0.2)
 	tw.play()
 	await tw.finished
+	match value:
+		1:
+			$/root/Main/Player/ChargedShotLevel1Sound.play()
+		2:
+			$/root/Main/Player/ChargedShotLevel2Sound.play()
+		3:
+			$/root/Main/Player/ChargedShotLevel3Sound.play()
 	tw.stop()
-	tw.tween_property(charged_shot_bar, "tint_over", Color(0.5, 0.5, 0.5, 1.0), 0.3)
+	tw.tween_property(charged_shot_bar, "tint_over", Color(0.5, 0.5, 0.5, 1.0), 0.2)
 	tw.play()
 	await tw.finished
-	tw.stop()
-	#charged_shot_bar.value = shot_level
-
 
 func update_shield(value):
 	shield_bar.texture_progress = bar_textures["green"]
@@ -83,14 +87,15 @@ func add_lives(value):
 
 
 func update_lives(value):
-	var i = -1
+	var i = 0
 	for item in lives_container.get_children():
-		i += 1
 		item.visible = value > i
+		i += 1
 
 
 func update_wave(value):
-	$MarginContainer/VBoxContainer/HBoxContainer/WaveLabel.text = "WAVE %d" % value
+	$MarginContainer/VBoxContainer/HBoxContainer/WaveLabel.text = "  WAVE %d " % value
+	$MarginContainer/VBoxContainer/HBoxContainer/WaveLabel.show()
 
 
 func game_over():

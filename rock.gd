@@ -8,7 +8,7 @@ var size
 var radius
 var scale_factor = 0.2
 var shot_level = 0
-
+var award_points = true
 
 func start(_position, _velocity, _size):
 	position = _position
@@ -65,7 +65,7 @@ func explode(magnitude):
 	$Explosion/AnimationPlayer.play("explosion")
 	$ExplosionSound.pitch_scale = randf_range(rock_pitch, rock_pitch+0.25)
 	$ExplosionSound.play()
-	exploded.emit(size, radius, position, linear_velocity, shot_level)
+	exploded.emit(size, radius, position, linear_velocity, shot_level, award_points)
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0
 	await $Explosion/AnimationPlayer.animation_finished

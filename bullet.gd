@@ -21,7 +21,7 @@ func _on_bullet_body_entered(body):
 		match shot_level:
 			0:
 				body.shot_level = shot_level
-				body.explode(0)
+				body.explode(1)
 				queue_free()
 			1:
 				body.shot_level = shot_level

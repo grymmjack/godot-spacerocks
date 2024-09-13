@@ -50,6 +50,7 @@ func game_over():
 	$HUD.game_over()
 	$Music.stop()
 	$Player/PlayerDeathSound.play()
+	$HUD/MarginContainer/VBoxContainer/HBoxContainer/WaveLabel.hide()
 	$Player.state = $Player.INIT
 
 
@@ -61,7 +62,6 @@ func new_game():
 	# remove any old enemies from previous game
 	get_tree().call_group("enemies", "queue_free")
 	level = 0
-	$HUD.update_wave(level)
 	score = 0
 	$HUD.update_score(score)
 	$HUD.add_lives(3)
@@ -126,19 +126,17 @@ func spawn_rock(size, pos=null, vel=null):
 	r.exploded.connect(self._on_rock_exploded)
 
 
-func _on_rock_exploded(size, radius, pos, vel, shot_level):
+func _on_rock_exploded(size, radius, pos, vel, shot_level, award_points):
 	$Player.shield += 1
-	$HUD.update_score(score)
-	if size <= 1:
-		return
 	match shot_level:
 		0,1:
-			score += 10 * size
+			score += 5 * size
 			for offset in [ -1, 1 ]:
 				var dir = $Player.position.direction_to(pos).orthogonal() * offset
 				var newpos = pos + dir * radius
 				var newvel = dir * vel.length() * 1.1
-				spawn_rock(size - 1, newpos, newvel)
+				if size >= 2:
+					spawn_rock(size - 1, newpos, newvel)
 		1:
 				score += 15 * size
 				$Player.shield += 5
@@ -152,11 +150,14 @@ func _on_rock_exploded(size, radius, pos, vel, shot_level):
 				var newvel = dir * vel.length() * 1.1
 				if size - 2 > 1:
 					$ChargedShotLevel2ExplodeSound.play()
-					spawn_rock(size - 2, newpos, newvel)
-		3:
+					if size >= 3:
+						spawn_rock(size - 2, newpos, newvel)
+		3,4,5,6,7,8,9,10:
 			score += 40 * size
 			$Player.shield = $Player.max_shield
 			$ChargedShotLevel3ExplodeSound.play()
+	if $Player.state != $Player.DEAD && award_points:
+		$HUD.update_score(score)
 
 
 func _on_enemy_timer_timeout():

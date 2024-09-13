@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bgrmwgjf2vuc8" path="res://bullet.tscn" id="2_inuna"]
 [ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://explosion.tscn" id="4_27l8c"]
 [ext_resource type="Shader" path="res://wobbly.gdshader" id="4_uy431"]
-[ext_resource type="Texture2D" uid="uid://coaybfgo7c12s" path="res://assets/player_ship_shield.png" id="4_xdeo1"]
+[ext_resource type="Texture2D" uid="uid://br4j6r5x6y7ws" path="res://assets/player_ship_shield.png" id="4_xdeo1"]
 [ext_resource type="AudioStream" uid="uid://cnikjbncbgpdp" path="res://assets/sounds/player_laser-2.wav" id="5_smyye"]
 [ext_resource type="AudioStream" uid="uid://dx8un04x32e0q" path="res://assets/sounds/engine.ogg" id="6_71o1i"]
 [ext_resource type="AudioStream" uid="uid://bqe1q27f204pf" path="res://assets/sounds/charged_shot_level_1.wav" id="7_3215m"]

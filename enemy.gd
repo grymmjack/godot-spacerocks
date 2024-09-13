@@ -78,8 +78,8 @@ func explode():
 
 func _on_gun_cooldown_timeout():
 	var shot_type:int = randi_range(1, 6)
-	if $/root/Main/Player.lives >= 4:
-		shot_type = 6
+	if $/root/Main/Player.lives >= 5:
+		shot_type += 2
 	if shot_type > 5:
 		shoot_pulse(3, 0.15)
 	else:
