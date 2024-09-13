@@ -60,7 +60,7 @@ func new_game():
 	get_tree().call_group("rocks", "queue_free")
 	# remove any old enemies from previous game
 	get_tree().call_group("enemies", "queue_free")
-	level = 0
+	level = 1
 	score = 0
 	$HUD.update_score(score)
 	$HUD.add_lives(3)

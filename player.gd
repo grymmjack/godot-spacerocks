@@ -55,7 +55,7 @@ func change_state(new_state):
 			$Sprite2D.modulate.a = 1.0
 			state = ALIVE
 		INVULNERABLE:
-			$CollisionShape2D.set_deferred("disabled", true)
+			#$CollisionShape2D.set_deferred("disabled", true)
 			$Sprite2D.modulate.a = 0.5
 			$InvulnerabilityTimer.start()
 			shot_charging = false
@@ -182,6 +182,7 @@ func set_shield(value):
 func shoot():
 	if get_tree().paused:
 		return
+	# can't shoot if we are invulnerable
 	if state == INVULNERABLE:
 		return
 	can_shoot = false
@@ -229,12 +230,17 @@ func _integrate_forces(physics_state):
 	if get_tree().paused:
 		return
 	if reset_pos:
-		physics_state.transform.origin = screensize / 2
-		reset_pos = false
+		respawn_ship(physics_state)
 	var xform = physics_state.transform
 	xform.origin.x = wrapf(xform.origin.x, 0, screensize.x)
 	xform.origin.y = wrapf(xform.origin.y, 0, screensize.y)
 	physics_state.transform = xform
+
+
+func respawn_ship(physics_state):
+	# TODO
+	physics_state.transform.origin = screensize / 2
+	reset_pos = false
 
 
 func set_lives(value):
@@ -258,7 +264,6 @@ func set_lives(value):
 func reset():
 	reset_pos = true
 	$Sprite2D.show()
-	lives = 3
 	shot_charging = false
 	update_shot_level(0)
 	shield = max_shield
@@ -288,8 +293,10 @@ func _on_invulnerability_timer_timeout():
 
 func _on_player_body_entered(body):
 	if body.is_in_group("rocks"):
-		shield -= body.size * 25
-		body.explode(1)
+		if state != INVULNERABLE:
+			shield -= body.size * 25
+		body.explode(10)
+
 
 
 func explode() -> void:
