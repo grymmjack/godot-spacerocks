@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://dl3podg65ie5x"]
+[gd_scene load_steps=17 format=3 uid="uid://dl3podg65ie5x"]
 
 [ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_eyvbe"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://b6ta3asm50yn4" path="res://assets/sounds/charged_shot_level_1_explode.wav" id="11_ngw7h"]
 [ext_resource type="AudioStream" uid="uid://y4w83s0j1ud1" path="res://assets/sounds/charged_shot_level_2_explode.wav" id="12_33bcy"]
 [ext_resource type="AudioStream" uid="uid://cl4usq4dgww6i" path="res://assets/sounds/charge_shot_level_3_explode.wav" id="13_pjebt"]
+[ext_resource type="PackedScene" uid="uid://nfjggyqmtkap" path="res://scenes/mouse_crosshair.tscn" id="14_fhqut"]
 
 [sub_resource type="PackedScene" id="PackedScene_oacvs"]
 _bundled = {
@@ -29,7 +30,7 @@ _bundled = {
 
 [sub_resource type="Curve2D" id="Curve2D_log48"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 1088, 128, 0, 0, 0, 0, 1088, 640, 0, 0, 0, 0, 64, 640, 0, 0, 0, 0, 64, 128)
+"points": PackedVector2Array(0, 0, 0, 0, 55, 339, 0, 0, 0, 0, 1640, 337, 0, 0, 0, 0, 1639, 1044, 0, 0, 0, 0, 57, 1045, 0, 0, 0, 0, 55, 352)
 }
 point_count = 5
 
@@ -41,19 +42,20 @@ enemy_scene = ExtResource("3_4y3id")
 screen_fx = SubResource("PackedScene_oacvs")
 
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(840, 524)
+position = Vector2(839, 524)
 scale = Vector2(0.875, 0.97037)
 texture = ExtResource("1_aygtu")
 
 [node name="Player" parent="." instance=ExtResource("2_eu3xu")]
-position = Vector2(608, 320)
+position = Vector2(832, 538)
 
 [node name="RockPath" type="Path2D" parent="."]
 position = Vector2(0, -64)
 curve = SubResource("Curve2D_log48")
 
 [node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
-position = Vector2(64, 128)
+position = Vector2(55, 339)
+rotation = -0.00126183
 
 [node name="HUD" parent="." instance=ExtResource("4_stxmg")]
 
@@ -84,9 +86,15 @@ stream = ExtResource("12_33bcy")
 [node name="ChargedShotLevel3ExplodeSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_pjebt")
 
+[node name="MouseCrosshair" parent="." instance=ExtResource("14_fhqut")]
+
+[node name="MouseAimDisableTimer" type="Timer" parent="."]
+autostart = true
+
 [connection signal="charged_shot_changed" from="Player" to="." method="_on_player_charged_shot_changed"]
 [connection signal="dead" from="Player" to="." method="game_over"]
 [connection signal="lives_changed" from="Player" to="HUD" method="update_lives"]
 [connection signal="shield_changed" from="Player" to="HUD" method="update_shield"]
 [connection signal="start_game" from="HUD" to="." method="new_game"]
 [connection signal="timeout" from="EnemyTimer" to="." method="_on_enemy_timer_timeout"]
+[connection signal="timeout" from="MouseAimDisableTimer" to="." method="_on_mouse_aim_disable_timer_timeout"]

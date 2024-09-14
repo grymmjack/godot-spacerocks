@@ -7,7 +7,7 @@ signal dead
 
 @export var bullet_scene : PackedScene
 @export var engine_power = 800
-@export var spin_power = 4000
+@export var spin_power = 7000
 @export var fire_rate = 0.18
 @export var max_shield = 100.0
 @export var shield_regen = 5.0
@@ -95,6 +95,7 @@ func get_input(_delta):
 	thrust = Vector2.ZERO
 	if state in [ INIT, DEAD ]:
 		return
+
 	if Input.is_action_pressed("turbo_rotate"):
 		angular_damp *= 0.25
 		thrust = Vector2.ZERO
@@ -145,6 +146,12 @@ func get_input(_delta):
 		$ChargedShotLevel3Timer.stop()
 		shoot()
 		shot_charging = false
+
+	# mouse handler
+	if $/root/Main.aim_with_mouse == true:
+		var mouse_position = get_viewport().get_mouse_position()
+		var direction = (mouse_position - position).normalized()
+		rotation = direction.angle()
 
 
 func fail_charged_shot():

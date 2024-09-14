@@ -3,6 +3,7 @@ extends Node
 @export var rock_scene : PackedScene
 @export var enemy_scene : PackedScene
 @export var screen_fx : PackedScene
+@export var aim_with_mouse = false : set = setup_mouse
 
 var screensize = Vector2.ZERO
 var level = 0
@@ -30,6 +31,12 @@ func _process(_delta):
 
 
 func _input(event):
+	if event is InputEventMouseMotion:
+		aim_with_mouse = true
+		var mouse_position = get_viewport().get_mouse_position()
+		$MouseCrosshair/Sprite2D.position = mouse_position
+
+
 	if event.is_action_pressed("pause"):
 		if !playing:
 			return
@@ -45,7 +52,24 @@ func _input(event):
 			$Music.volume_db = MUSIC_VOLUME
 
 
+func setup_mouse(value):
+	if value == aim_with_mouse:
+		# only restart timer
+		$MouseAimDisableTimer.stop()
+		$MouseAimDisableTimer.start()
+		return
+	aim_with_mouse = value
+	if aim_with_mouse == true:
+		$MouseCrosshair.visible = true
+	else:
+		$MouseCrosshair.visible = false
+	# restart timer
+	$MouseAimDisableTimer.stop()
+	$MouseAimDisableTimer.start()
+
+
 func game_over():
+	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	playing = false
 	$HUD.game_over()
 	$Music.stop()
@@ -55,6 +79,7 @@ func game_over():
 
 
 func new_game():
+	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	$Player.show()
 	$HUD/MarginContainer.show()
 	# remove any old rocks from previous game
@@ -172,3 +197,7 @@ func _on_enemy_timer_timeout():
 
 func _on_player_charged_shot_changed(shot_level):
 	$HUD.shot_level = shot_level
+
+
+func _on_mouse_aim_disable_timer_timeout() -> void:
+	aim_with_mouse = false

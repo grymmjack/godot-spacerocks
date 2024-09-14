@@ -62,9 +62,9 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="WaveLabel" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
-text = "WAVE 0"
 label_settings = ExtResource("4_orrfd")
 
 [node name="ShieldContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
@@ -136,12 +136,6 @@ horizontal_alignment = 1
 [node name="StartButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
-focus_neighbor_left = NodePath(".")
-focus_neighbor_top = NodePath(".")
-focus_neighbor_right = NodePath(".")
-focus_neighbor_bottom = NodePath(".")
-focus_next = NodePath(".")
-focus_previous = NodePath(".")
 theme = ExtResource("11_1555l")
 shortcut = SubResource("Shortcut_dma03")
 text = "PLAY"
