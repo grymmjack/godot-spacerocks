@@ -1,0 +1,11 @@
+[gd_resource type="StyleBoxTexture" load_steps=2 format=3 uid="uid://cjm58kqiak1vl"]
+
+[ext_resource type="Texture2D" uid="uid://cngim5fnmvoxe" path="res://assets/button_blank_idle.png" id="1_xq12h"]
+
+[resource]
+texture = ExtResource("1_xq12h")
+texture_margin_left = 50.1969
+texture_margin_top = 14.3887
+texture_margin_right = 35.1542
+texture_margin_bottom = 16.8413
+region_rect = Rect2(0, 0, 249, 65)

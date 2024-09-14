@@ -1,0 +1,10 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://dxfddf6itgj0t"]
+
+[ext_resource type="FontFile" uid="uid://cg8kr11cqrt5s" path="res://assets/kenvector_future_thin.ttf" id="1_fcnfn"]
+
+[resource]
+font = ExtResource("1_fcnfn")
+font_size = 128
+shadow_size = 3
+shadow_color = Color(0, 0, 0, 0.352941)
+shadow_offset = Vector2(4, 4)

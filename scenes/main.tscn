@@ -1,0 +1,92 @@
+[gd_scene load_steps=16 format=3 uid="uid://dl3podg65ie5x"]
+
+[ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
+[ext_resource type="Script" path="res://scripts/main.gd" id="1_eyvbe"]
+[ext_resource type="PackedScene" uid="uid://cbgmv7h00ij4f" path="res://scenes/player.tscn" id="2_eu3xu"]
+[ext_resource type="PackedScene" uid="uid://co606jqflxw6m" path="res://scenes/rock.tscn" id="2_lrp2b"]
+[ext_resource type="PackedScene" uid="uid://dw4rodtlfvbum" path="res://scenes/enemy.tscn" id="3_4y3id"]
+[ext_resource type="PackedScene" uid="uid://df61wqntfphtr" path="res://scenes/hud.tscn" id="4_stxmg"]
+[ext_resource type="AudioStream" uid="uid://ckckxicfxlddy" path="res://assets/sounds/explosion.wav" id="7_dbt1q"]
+[ext_resource type="AudioStream" uid="uid://q7hmfuheyie6" path="res://assets/sounds/levelup.ogg" id="8_twjxo"]
+[ext_resource type="AudioStream" uid="uid://1jfv7jitycu6" path="res://assets/sounds/Funky-Gameplay_Looping.ogg" id="9_7rs3o"]
+[ext_resource type="AudioStream" uid="uid://ci85hkkafofqu" path="res://assets/sounds/free-guy.wav" id="10_mcsfu"]
+[ext_resource type="AudioStream" uid="uid://b6ta3asm50yn4" path="res://assets/sounds/charged_shot_level_1_explode.wav" id="11_ngw7h"]
+[ext_resource type="AudioStream" uid="uid://y4w83s0j1ud1" path="res://assets/sounds/charged_shot_level_2_explode.wav" id="12_33bcy"]
+[ext_resource type="AudioStream" uid="uid://cl4usq4dgww6i" path="res://assets/sounds/charge_shot_level_3_explode.wav" id="13_pjebt"]
+
+[sub_resource type="PackedScene" id="PackedScene_oacvs"]
+_bundled = {
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"names": PackedStringArray("CanvasLayer", "ColorRect", "offset_right", "offset_bottom"),
+"node_count": 2,
+"node_paths": [],
+"nodes": PackedInt32Array(-1, -1, 0, 0, -1, 0, 0, 0, 0, 1, 1, -1, 2, 2, 0, 3, 1, 0),
+"variants": [1680.0, 1050.0],
+"version": 3
+}
+
+[sub_resource type="Curve2D" id="Curve2D_log48"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 64, 128, 0, 0, 0, 0, 1088, 128, 0, 0, 0, 0, 1088, 640, 0, 0, 0, 0, 64, 640, 0, 0, 0, 0, 64, 128)
+}
+point_count = 5
+
+[node name="Main" type="Node"]
+process_mode = 3
+script = ExtResource("1_eyvbe")
+rock_scene = ExtResource("2_lrp2b")
+enemy_scene = ExtResource("3_4y3id")
+screen_fx = SubResource("PackedScene_oacvs")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(840, 524)
+scale = Vector2(0.875, 0.97037)
+texture = ExtResource("1_aygtu")
+
+[node name="Player" parent="." instance=ExtResource("2_eu3xu")]
+position = Vector2(608, 320)
+
+[node name="RockPath" type="Path2D" parent="."]
+position = Vector2(0, -64)
+curve = SubResource("Curve2D_log48")
+
+[node name="RockSpawn" type="PathFollow2D" parent="RockPath"]
+position = Vector2(64, 128)
+
+[node name="HUD" parent="." instance=ExtResource("4_stxmg")]
+
+[node name="EnemyTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_dbt1q")
+volume_db = -3.0
+
+[node name="LevelupSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_twjxo")
+
+[node name="Music" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_7rs3o")
+volume_db = -2.0
+
+[node name="FreeGuySound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_mcsfu")
+pitch_scale = 0.5
+
+[node name="ChargedShotLevel1ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_ngw7h")
+
+[node name="ChargedShotLevel2ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("12_33bcy")
+
+[node name="ChargedShotLevel3ExplodeSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("13_pjebt")
+
+[connection signal="charged_shot_changed" from="Player" to="." method="_on_player_charged_shot_changed"]
+[connection signal="dead" from="Player" to="." method="game_over"]
+[connection signal="lives_changed" from="Player" to="HUD" method="update_lives"]
+[connection signal="shield_changed" from="Player" to="HUD" method="update_shield"]
+[connection signal="start_game" from="HUD" to="." method="new_game"]
+[connection signal="timeout" from="EnemyTimer" to="." method="_on_enemy_timer_timeout"]

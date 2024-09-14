@@ -1,0 +1,30 @@
+[gd_scene load_steps=5 format=3 uid="uid://6cgln8cut3ao"]
+
+[ext_resource type="Script" path="res://scripts/enemy_bullet.gd" id="1_mvodv"]
+[ext_resource type="Texture2D" uid="uid://c10g0uqemcnyn" path="res://assets/laser_green.png" id="2_orys7"]
+[ext_resource type="AudioStream" uid="uid://ckckxicfxlddy" path="res://assets/sounds/explosion.wav" id="3_rcl3t"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k4qu6"]
+radius = 2.0
+height = 28.0
+
+[node name="EnemyBullet" type="Area2D" groups=["enemy_bullet"]]
+process_mode = 3
+script = ExtResource("1_mvodv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_orys7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_k4qu6")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_rcl3t")
+volume_db = -3.0
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
