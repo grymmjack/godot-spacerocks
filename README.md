@@ -16,6 +16,14 @@ Free ship every 1000 points.
 ENTER/Left Click = PLAY  
 ESCAPE = Pause  
 
+### Mouse Mode
+> Note if you later move joystick or use keys to play, it will turn off mouse mode. To re-enable just move the mouse again.
+
+Aim: `Move mouse`
+Shoot: `Left Click`
+Thrust: `Right Click`
+Slow Down: `Middle Click`
+
 ### Movement
 Rotate Left: `Left Arrow`, `A`, `Joystick Left`  
 Rotate Right: `Right Arrow`, `D`, `Joystick Right`  
