@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cbgmv7h00ij4f"]
+[gd_scene load_steps=19 format=3 uid="uid://cbgmv7h00ij4f"]
 
 [ext_resource type="Texture2D" uid="uid://byjlamtq07vga" path="res://assets/player_ship.png" id="1_6ek3v"]
 [ext_resource type="Script" path="res://scripts/player.gd" id="1_fpju5"]
@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://drc2361xyfjhd" path="res://assets/sounds/charged_shot_level_3.wav" id="9_cvyoo"]
 [ext_resource type="AudioStream" uid="uid://cc0ahtpurudch" path="res://assets/sounds/charge_fail.wav" id="10_gyh7t"]
 [ext_resource type="AudioStream" uid="uid://bbib0aevane46" path="res://assets/sounds/player_death.wav" id="11_83exv"]
+[ext_resource type="PackedScene" uid="uid://bvwdbfgwg3ceb" path="res://scenes/charged_shot_gadget.tscn" id="14_1bfje"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8ksur"]
 shader = ExtResource("4_uy431")
@@ -68,7 +69,7 @@ scale = Vector2(0.5, 0.5)
 shape = SubResource("CircleShape2D_n5108")
 
 [node name="Muzzle" type="Marker2D" parent="."]
-position = Vector2(50, 0)
+position = Vector2(34, 0)
 
 [node name="GunCooldown" type="Timer" parent="."]
 one_shot = true
@@ -137,6 +138,9 @@ stream = ExtResource("10_gyh7t")
 
 [node name="PlayerDeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("11_83exv")
+
+[node name="ChargedShotGadget" parent="." instance=ExtResource("14_1bfje")]
+position = Vector2(27, -3)
 
 [connection signal="body_entered" from="." to="." method="_on_player_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]

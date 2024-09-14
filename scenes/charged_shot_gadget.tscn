@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://bvwdbfgwg3ceb"]
+
+[node name="ChargedShotGadget" type="Node2D"]
+
+[node name="Level1" type="Node2D" parent="."]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="Level1"]
+offset_left = -2.0
+offset_bottom = 1.0
+color = Color(0.333333, 1, 0.976471, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Level1"]
+offset_left = -2.0
+offset_top = 5.0
+offset_bottom = 6.0
+color = Color(0.333333, 1, 0.976471, 1)
+
+[node name="Level2" type="Node2D" parent="."]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="Level2"]
+offset_left = 1.0
+offset_right = 3.0
+offset_bottom = 1.0
+color = Color(0.333333, 1, 0.976471, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Level2"]
+offset_left = 1.0
+offset_top = 5.0
+offset_right = 3.0
+offset_bottom = 6.0
+color = Color(0.333333, 1, 0.976471, 1)
+
+[node name="Level3" type="Node2D" parent="."]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="Level3"]
+offset_left = 4.0
+offset_right = 6.0
+offset_bottom = 1.0
+color = Color(0.333333, 1, 0.976471, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Level3"]
+offset_left = 4.0
+offset_top = 5.0
+offset_right = 6.0
+offset_bottom = 6.0
+color = Color(0.333333, 1, 0.976471, 1)

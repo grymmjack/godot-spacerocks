@@ -6,6 +6,7 @@ signal charged_shot_changed
 signal dead
 
 @export var bullet_scene : PackedScene
+@export var charged_shot_gadget : PackedScene
 @export var engine_power = 800
 @export var spin_power = 7000
 @export var fire_rate = 0.18
@@ -51,6 +52,13 @@ func change_state(new_state):
 			$Sprite2D.modulate.a = 0.5
 			$ShieldOrb.modulate.a = 0.5
 			state = INIT
+			$ChargedShotLevel1Timer.stop()
+			$ChargedShotLevel2Timer.stop()
+			$ChargedShotLevel3Timer.stop()
+			$ChargedShotGadget/Level1.hide()
+			$ChargedShotGadget/Level2.hide()
+			$ChargedShotGadget/Level3.hide()
+			shot_charging = false
 		ALIVE:
 			$CollisionShape2D.set_deferred("disabled", false)
 			$Sprite2D.modulate.a = 1.0
@@ -66,6 +74,12 @@ func change_state(new_state):
 			$InvulnerabilityTimer.start()
 			shot_charging = false
 			state = INVULNERABLE
+			$ChargedShotLevel1Timer.stop()
+			$ChargedShotLevel2Timer.stop()
+			$ChargedShotLevel3Timer.stop()
+			$ChargedShotGadget/Level1.hide()
+			$ChargedShotGadget/Level2.hide()
+			$ChargedShotGadget/Level3.hide()
 			update_shot_level(0)
 			if $/root/Main/EnemyTimer.is_stopped:
 				$/root/Main/EnemyTimer.start()
@@ -77,6 +91,12 @@ func change_state(new_state):
 			linear_velocity = Vector2.ZERO
 			dead.emit()
 			state = DEAD
+			$ChargedShotLevel1Timer.stop()
+			$ChargedShotLevel2Timer.stop()
+			$ChargedShotLevel3Timer.stop()
+			$ChargedShotGadget/Level1.hide()
+			$ChargedShotGadget/Level2.hide()
+			$ChargedShotGadget/Level3.hide()
 			update_shot_level(0)
 
 
@@ -152,6 +172,9 @@ func get_input(_delta):
 		$ChargedShotLevel3Timer.stop()
 		shoot()
 		shot_charging = false
+		$ChargedShotGadget/Level1.hide()
+		$ChargedShotGadget/Level2.hide()
+		$ChargedShotGadget/Level3.hide()
 
 
 func fail_charged_shot():
@@ -165,6 +188,7 @@ func update_shot_level(value):
 
 func set_shot_level_1():
 	if Input.is_action_pressed("shoot"):
+		$ChargedShotGadget/Level1.show()
 		update_shot_level(1)
 		$ChargedShotLevel1Timer.stop()
 		$ChargedShotLevel2Timer.stop()
@@ -175,6 +199,7 @@ func set_shot_level_1():
 
 func set_shot_level_2():
 	if Input.is_action_pressed("shoot"):
+		$ChargedShotGadget/Level2.show()
 		update_shot_level(2)
 		$ChargedShotLevel1Timer.stop()
 		$ChargedShotLevel2Timer.stop()
@@ -185,6 +210,7 @@ func set_shot_level_2():
 
 func set_shot_level_3():
 	if Input.is_action_pressed("shoot"):
+		$ChargedShotGadget/Level3.show()
 		update_shot_level(3)
 		$ChargedShotLevel1Timer.stop()
 		$ChargedShotLevel2Timer.stop()
