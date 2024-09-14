@@ -1,0 +1,83 @@
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://d3gyioyovgypn"]
+
+[ext_resource type="FontFile" uid="uid://cg8kr11cqrt5s" path="res://assets/kenvector_future_thin.ttf" id="1_cle1i"]
+[ext_resource type="StyleBox" uid="uid://by67l1q1dmk3n" path="res://assets/theme/button-stylebox-texture-disabled.tres" id="2_12k8c"]
+[ext_resource type="StyleBox" uid="uid://cjm58kqiak1vl" path="res://assets/theme/button-stylebox-texture-idle.tres" id="2_77u1b"]
+[ext_resource type="StyleBox" uid="uid://baxr2742vybm5" path="res://assets/theme/button-stylebox-texture-hover.tres" id="2_rd2va"]
+[ext_resource type="StyleBox" uid="uid://du3brjqoqhtew" path="res://assets/theme/option-button-stylebox.tres" id="5_ugx6c"]
+[ext_resource type="StyleBox" uid="uid://0p4e18aaacdt" path="res://assets/theme/label-stylebox.tres" id="5_v7riu"]
+[ext_resource type="StyleBox" uid="uid://0hgeabhxayl2" path="res://assets/theme/lineedit-flat-stylebox.tres" id="6_55uch"]
+
+[resource]
+default_font = ExtResource("1_cle1i")
+Button/colors/font_color = Color(1, 1, 1, 0.862745)
+Button/colors/font_disabled_color = Color(0.88, 0.88, 0.88, 0.352941)
+Button/colors/font_hover_color = Color(0.95, 0.95, 0.95, 1)
+Button/colors/font_outline_color = Color(0, 0, 0, 0.352941)
+Button/constants/align_to_largest_stylebox = 1
+Button/constants/outline_size = 10
+Button/font_sizes/font_size = 60
+Button/fonts/font = ExtResource("1_cle1i")
+Button/styles/disabled = ExtResource("2_12k8c")
+Button/styles/focus = ExtResource("2_rd2va")
+Button/styles/hover = ExtResource("2_rd2va")
+Button/styles/hover_pressed = ExtResource("2_rd2va")
+Button/styles/normal = ExtResource("2_77u1b")
+Button/styles/pressed = ExtResource("2_12k8c")
+CheckBox/constants/h_separation = 24
+CheckBox/font_sizes/font_size = 32
+CheckBox/styles/disabled = ExtResource("5_v7riu")
+CheckBox/styles/focus = ExtResource("5_v7riu")
+CheckBox/styles/hover = ExtResource("5_v7riu")
+CheckBox/styles/hover_pressed = ExtResource("5_v7riu")
+CheckBox/styles/normal = ExtResource("5_v7riu")
+CheckBox/styles/pressed = ExtResource("5_v7riu")
+CheckButton/font_sizes/font_size = 32
+CheckButton/styles/disabled = ExtResource("5_v7riu")
+CheckButton/styles/focus = ExtResource("5_v7riu")
+CheckButton/styles/hover = ExtResource("5_v7riu")
+CheckButton/styles/hover_pressed = ExtResource("5_v7riu")
+CheckButton/styles/normal = ExtResource("5_v7riu")
+CheckButton/styles/pressed = ExtResource("5_v7riu")
+Label/colors/font_shadow_color = Color(0, 0, 0, 0.352941)
+Label/constants/shadow_offset_x = 4
+Label/constants/shadow_offset_y = 4
+Label/constants/shadow_outline_size = 0
+Label/font_sizes/font_size = 32
+Label/fonts/font = ExtResource("1_cle1i")
+Label/styles/normal = ExtResource("5_v7riu")
+LineEdit/colors/caret_color = Color(0.54902, 0.847059, 0.541176, 1)
+LineEdit/colors/clear_button_color = Color(0.875, 0.875, 0.875, 1)
+LineEdit/colors/clear_button_color_pressed = Color(1, 1, 1, 1)
+LineEdit/colors/font_color = Color(0.878431, 0.905882, 0.905882, 1)
+LineEdit/colors/font_placeholder_color = Color(0.611765, 0.611765, 0.611765, 1)
+LineEdit/colors/font_selected_color = Color(0.55, 1, 0.9625, 1)
+LineEdit/colors/font_uneditable_color = Color(0.34902, 0.411765, 0.407843, 1)
+LineEdit/colors/selection_color = Color(0.126, 0.36, 0.3405, 0.392157)
+LineEdit/font_sizes/font_size = 24
+LineEdit/styles/normal = ExtResource("6_55uch")
+LineEdit/styles/read_only = ExtResource("6_55uch")
+MenuButton/font_sizes/font_size = 32
+OptionButton/constants/arrow_margin = 32
+OptionButton/font_sizes/font_size = 32
+OptionButton/styles/disabled = ExtResource("5_ugx6c")
+OptionButton/styles/focus = ExtResource("5_ugx6c")
+OptionButton/styles/hover = ExtResource("5_ugx6c")
+OptionButton/styles/hover_pressed = ExtResource("5_ugx6c")
+OptionButton/styles/normal = ExtResource("5_ugx6c")
+OptionButton/styles/pressed = ExtResource("5_ugx6c")
+TextEdit/colors/caret_color = Color(0.875, 0.875, 0.875, 1)
+TextEdit/colors/current_line_color = Color(0.126, 0.36, 0.3405, 0.392157)
+TextEdit/colors/font_color = Color(0.875, 0.875, 0.875, 1)
+TextEdit/colors/font_placeholder_color = Color(0.611765, 0.611765, 0.611765, 1)
+TextEdit/colors/font_readonly_color = Color(0.34902, 0.411765, 0.407843, 1)
+TextEdit/colors/font_selected_color = Color(0.55, 1, 0.9625, 1)
+TextEdit/colors/search_result_border_color = Color(0.126, 0.36, 0.3405, 0.392157)
+TextEdit/colors/search_result_color = Color(0.54902, 0.847059, 0.541176, 1)
+TextEdit/colors/selection_color = Color(0.126, 0.36, 0.3405, 0.392157)
+TextEdit/colors/word_highlighted_color = Color(0.126, 0.36, 0.3405, 0.392157)
+TextEdit/font_sizes/font_size = 24
+TextEdit/styles/focus = ExtResource("6_55uch")
+TextEdit/styles/normal = ExtResource("6_55uch")
+TextEdit/styles/read_only = ExtResource("6_55uch")
+VBoxContainer/constants/separation = 16

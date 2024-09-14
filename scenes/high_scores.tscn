@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://bq8r4bffq3s1t"]
+
+[ext_resource type="LabelSettings" uid="uid://dxfddf6itgj0t" path="res://assets/theme/heading-label-settings.tres" id="1_01mi8"]
+[ext_resource type="Theme" uid="uid://d3gyioyovgypn" path="res://assets/theme/space_rocks_theme.tres" id="2_p40g6"]
+
+[node name="HighScores" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Message" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 144.0
+grow_horizontal = 2
+text = "Space Rocks!"
+label_settings = ExtResource("1_01mi8")
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -65.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="Button" type="Button" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("2_p40g6")
+theme_type_variation = &"BigButton"
+text = " PLAY "

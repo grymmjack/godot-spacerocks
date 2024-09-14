@@ -1,0 +1,151 @@
+[gd_scene load_steps=19 format=3 uid="uid://cbgmv7h00ij4f"]
+
+[ext_resource type="Texture2D" uid="uid://byjlamtq07vga" path="res://assets/player_ship.png" id="1_6ek3v"]
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_fpju5"]
+[ext_resource type="PackedScene" uid="uid://bgrmwgjf2vuc8" path="res://scenes/bullet.tscn" id="2_inuna"]
+[ext_resource type="PackedScene" uid="uid://cr01kijsvftps" path="res://scenes/explosion.tscn" id="4_27l8c"]
+[ext_resource type="Shader" path="res://assets/materials/wobbly.gdshader" id="4_uy431"]
+[ext_resource type="Texture2D" uid="uid://coaybfgo7c12s" path="res://assets/player_ship_shield.png" id="4_xdeo1"]
+[ext_resource type="AudioStream" uid="uid://cnikjbncbgpdp" path="res://assets/sounds/player_laser-2.wav" id="5_smyye"]
+[ext_resource type="AudioStream" uid="uid://dx8un04x32e0q" path="res://assets/sounds/engine.ogg" id="6_71o1i"]
+[ext_resource type="AudioStream" uid="uid://bqe1q27f204pf" path="res://assets/sounds/charged_shot_level_1.wav" id="7_3215m"]
+[ext_resource type="AudioStream" uid="uid://ctyg8ocaj8a13" path="res://assets/sounds/charged_shot_level_2.wav" id="8_ngi8c"]
+[ext_resource type="AudioStream" uid="uid://drc2361xyfjhd" path="res://assets/sounds/charged_shot_level_3.wav" id="9_cvyoo"]
+[ext_resource type="AudioStream" uid="uid://cc0ahtpurudch" path="res://assets/sounds/charge_fail.wav" id="10_gyh7t"]
+[ext_resource type="AudioStream" uid="uid://bbib0aevane46" path="res://assets/sounds/player_death.wav" id="11_83exv"]
+[ext_resource type="PackedScene" uid="uid://bvwdbfgwg3ceb" path="res://scenes/charged_shot_gadget.tscn" id="14_1bfje"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8ksur"]
+shader = ExtResource("4_uy431")
+shader_parameter/alpha = 0.5
+shader_parameter/alpha_tresh = 0.0
+shader_parameter/shrink = 2.0
+shader_parameter/offset_mul = 8.0
+shader_parameter/coff_angle = 0.0
+shader_parameter/coff_mul = 2.2
+shader_parameter/coff_std = 0.2
+shader_parameter/amp1 = 0.08
+shader_parameter/freq1 = 25.0
+shader_parameter/speed1 = 0.01
+shader_parameter/amp2 = 0.1
+shader_parameter/freq2 = 13.0
+shader_parameter/speed2 = 20.0
+shader_parameter/cols = ExtResource("4_xdeo1")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_n5108"]
+radius = 62.0322
+
+[sub_resource type="Curve" id="Curve_gg8h5"]
+_data = [Vector2(0.0120482, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.140078), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Gradient" id="Gradient_8d61m"]
+offsets = PackedFloat32Array(0, 0.614815, 1)
+colors = PackedColorArray(1, 0.683333, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0)
+
+[node name="Player" type="RigidBody2D"]
+contact_monitor = true
+max_contacts_reported = 1
+linear_damp = 0.75
+angular_damp = 4.0
+script = ExtResource("1_fpju5")
+bullet_scene = ExtResource("2_inuna")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.5708
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_6ek3v")
+
+[node name="ShieldOrb" type="Sprite2D" parent="."]
+show_behind_parent = true
+material = SubResource("ShaderMaterial_8ksur")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("4_xdeo1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+rotation = 1.5708
+scale = Vector2(0.5, 0.5)
+shape = SubResource("CircleShape2D_n5108")
+
+[node name="Muzzle" type="Marker2D" parent="."]
+position = Vector2(34, 0)
+
+[node name="GunCooldown" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[node name="RotationCooldown" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[node name="Explosion" parent="." instance=ExtResource("4_27l8c")]
+visible = false
+
+[node name="InvulnerabilityTimer" type="Timer" parent="."]
+wait_time = 3.0
+one_shot = true
+
+[node name="LaserSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("5_smyye")
+
+[node name="EngineSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_71o1i")
+volume_db = -80.0
+autoplay = true
+
+[node name="Exhaust" type="CPUParticles2D" parent="."]
+show_behind_parent = true
+position = Vector2(-28, 0)
+rotation = 3.14159
+amount = 25
+lifetime = 0.1
+local_coords = true
+emission_shape = 3
+emission_rect_extents = Vector2(1, 5)
+spread = 0.0
+gravity = Vector2(0, 0)
+initial_velocity_max = 400.0
+scale_amount_max = 8.0
+scale_amount_curve = SubResource("Curve_gg8h5")
+color_ramp = SubResource("Gradient_8d61m")
+
+[node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
+volume_db = -3.0
+
+[node name="ChargedShotLevel1Timer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="ChargedShotLevel2Timer" type="Timer" parent="."]
+one_shot = true
+
+[node name="ChargedShotLevel3Timer" type="Timer" parent="."]
+wait_time = 1.5
+one_shot = true
+
+[node name="ChargedShotLevel1Sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("7_3215m")
+
+[node name="ChargedShotLevel2Sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("8_ngi8c")
+
+[node name="ChargedShotLevel3Sound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("9_cvyoo")
+
+[node name="ChargedShotFailSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("10_gyh7t")
+
+[node name="PlayerDeathSound" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_83exv")
+
+[node name="ChargedShotGadget" parent="." instance=ExtResource("14_1bfje")]
+position = Vector2(27, -3)
+
+[connection signal="body_entered" from="." to="." method="_on_player_body_entered"]
+[connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
+[connection signal="timeout" from="RotationCooldown" to="." method="_on_rotation_cooldown_timeout"]
+[connection signal="timeout" from="InvulnerabilityTimer" to="." method="_on_invulnerability_timer_timeout"]
+[connection signal="timeout" from="ChargedShotLevel1Timer" to="." method="set_shot_level_1"]
+[connection signal="timeout" from="ChargedShotLevel2Timer" to="." method="set_shot_level_2"]
+[connection signal="timeout" from="ChargedShotLevel3Timer" to="." method="set_shot_level_3"]
