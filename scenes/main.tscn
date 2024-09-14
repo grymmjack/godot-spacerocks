@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dl3podg65ie5x"]
+[gd_scene load_steps=16 format=3 uid="uid://dl3podg65ie5x"]
 
 [ext_resource type="Texture2D" uid="uid://c1sukia6s6faq" path="res://assets/space_background.png" id="1_aygtu"]
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_eyvbe"]
@@ -13,7 +13,6 @@
 [ext_resource type="AudioStream" uid="uid://b6ta3asm50yn4" path="res://assets/sounds/charged_shot_level_1_explode.wav" id="11_ngw7h"]
 [ext_resource type="AudioStream" uid="uid://y4w83s0j1ud1" path="res://assets/sounds/charged_shot_level_2_explode.wav" id="12_33bcy"]
 [ext_resource type="AudioStream" uid="uid://cl4usq4dgww6i" path="res://assets/sounds/charge_shot_level_3_explode.wav" id="13_pjebt"]
-[ext_resource type="PackedScene" uid="uid://nfjggyqmtkap" path="res://scenes/mouse_crosshair.tscn" id="14_fhqut"]
 
 [sub_resource type="PackedScene" id="PackedScene_oacvs"]
 _bundled = {
@@ -85,9 +84,6 @@ stream = ExtResource("12_33bcy")
 
 [node name="ChargedShotLevel3ExplodeSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_pjebt")
-
-[node name="MouseCrosshair" parent="." instance=ExtResource("14_fhqut")]
-visible = false
 
 [connection signal="charged_shot_changed" from="Player" to="." method="_on_player_charged_shot_changed"]
 [connection signal="dead" from="Player" to="." method="game_over"]

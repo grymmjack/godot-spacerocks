@@ -4,7 +4,7 @@ extends Node
 @export var enemy_scene : PackedScene
 @export var screen_fx : PackedScene
 @export var aim_with_mouse = false : set = setup_mouse
-
+@onready var cursor_texture = preload("res://assets/crosshair.png")
 var screensize = Vector2.ZERO
 var level = 0
 var score = 0
@@ -33,8 +33,6 @@ func _process(_delta):
 func _input(event):
 	if event is InputEventMouseMotion:
 		aim_with_mouse = true
-		var mouse_position = get_viewport().get_mouse_position()
-		$MouseCrosshair/Sprite2D.position = mouse_position
 	if event is InputEventJoypadButton or event is InputEventJoypadMotion:
 		aim_with_mouse = false
 	if event is InputEventKey or event is InputEventJoypadMotion:
@@ -60,19 +58,15 @@ func _input(event):
 
 
 func setup_mouse(value):
-	if value == aim_with_mouse:
-		return
 	aim_with_mouse = value
 	if aim_with_mouse == true:
-		$MouseCrosshair.visible = true
-		Input.set_mouse_mode(Input.MOUSE_MODE_CONFINED_HIDDEN)
+		if playing:
+			Input.set_custom_mouse_cursor(cursor_texture, Input.CURSOR_ARROW)
 	else:
-		$MouseCrosshair.visible = false
-		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		Input.set_custom_mouse_cursor(null, Input.CURSOR_ARROW)
 
 
 func game_over():
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 	aim_with_mouse = false
 	playing = false
 	$HUD.game_over()
@@ -83,7 +77,6 @@ func game_over():
 
 
 func new_game():
-	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	$Player.show()
 	$HUD/MarginContainer.show()
 	# remove any old rocks from previous game
