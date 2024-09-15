@@ -25,6 +25,7 @@ shape = SubResource("CapsuleShape2D_k4qu6")
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_rcl3t")
 volume_db = -3.0
+bus = &"Explosions"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

@@ -28,4 +28,5 @@ visible = false
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_pau43")
-volume_db = -3.0
+volume_db = -6.0
+bus = &"Explosions"

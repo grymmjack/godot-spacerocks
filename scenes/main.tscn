@@ -63,27 +63,39 @@ one_shot = true
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_dbt1q")
-volume_db = -3.0
+volume_db = -6.0
+bus = &"Explosions"
 
 [node name="LevelupSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("8_twjxo")
+volume_db = -1.0
+bus = &"Gadgets"
 
 [node name="Music" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("9_7rs3o")
-volume_db = -2.0
+volume_db = -6.0
+bus = &"Music"
 
 [node name="FreeGuySound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_mcsfu")
+volume_db = -1.0
 pitch_scale = 0.5
+bus = &"Gadgets"
 
 [node name="ChargedShotLevel1ExplodeSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("11_ngw7h")
+volume_db = -1.0
+bus = &"Explosions"
 
 [node name="ChargedShotLevel2ExplodeSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_33bcy")
+volume_db = -1.0
+bus = &"Explosions"
 
 [node name="ChargedShotLevel3ExplodeSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("13_pjebt")
+volume_db = -1.0
+bus = &"Explosions"
 
 [connection signal="charged_shot_changed" from="Player" to="." method="_on_player_charged_shot_changed"]
 [connection signal="dead" from="Player" to="." method="game_over"]

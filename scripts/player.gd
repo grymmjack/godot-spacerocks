@@ -235,6 +235,8 @@ func set_shield(value):
 
 
 func shoot():
+	if !$/root/Main.playing:
+		return
 	if get_tree().paused:
 		return
 	# can't shoot if we are invulnerable

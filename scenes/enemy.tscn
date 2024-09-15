@@ -88,15 +88,20 @@ autostart = true
 
 [node name="ExplosionSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_ktid2")
-volume_db = -3.0
+volume_db = -6.0
+bus = &"Explosions"
 
 [node name="ShootSound" type="AudioStreamPlayer" parent="."]
 process_mode = 1
 stream = ExtResource("7_23t6s")
+volume_db = -1.0
 pitch_scale = 0.6
+bus = &"Weapons"
 
 [node name="LaserSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("7_p0ykq")
+volume_db = -1.0
+bus = &"Weapons"
 
 [node name="Exhaust" type="CPUParticles2D" parent="."]
 show_behind_parent = true
@@ -112,6 +117,8 @@ scale_amount_curve = SubResource("Curve_58evp")
 
 [node name="EnemyDeathSound" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("10_fu2oc")
+volume_db = -3.0
+bus = &"Explosions"
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="timeout" from="GunCooldown" to="." method="_on_gun_cooldown_timeout"]
