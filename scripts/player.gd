@@ -11,8 +11,8 @@ signal dead
 @export var spin_power = 7000
 @export var fire_rate = 0.18
 @export var max_shield = 100.0
-@export var shield_regen = 5.0
-@export var charged_shot_shield_regen = 2.5
+@export var shield_regen = 10.0
+@export var charged_shot_shield_regen = 5.0
 
 const SHOT_LEVEL_0_COST = 2.0
 const SHOT_LEVEL_1_COST = 10.0

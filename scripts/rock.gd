@@ -9,8 +9,18 @@ var radius
 var scale_factor = 0.2
 var shot_level = 0
 var award_points = true
+var h
+var s
+var v
 
-func start(_position, _velocity, _size):
+func start(_position, _velocity, _size, ch, cs, cv):
+	h = ch
+	s = cs
+	v = cv
+	var col:Color = Color.from_hsv(h, s, v)
+	$Sprite2D.self_modulate.r = col.r
+	$Sprite2D.self_modulate.g = col.g
+	$Sprite2D.self_modulate.b = col.b
 	position = _position
 	size = _size
 	mass = 1.5 * size
@@ -65,7 +75,7 @@ func explode(magnitude):
 	$Explosion/AnimationPlayer.play("explosion")
 	$ExplosionSound.pitch_scale = randf_range(rock_pitch, rock_pitch+0.25)
 	$ExplosionSound.play()
-	exploded.emit(size, radius, position, linear_velocity, shot_level, award_points)
+	exploded.emit(size, radius, position, linear_velocity, shot_level, award_points, h, s, v)
 	linear_velocity = Vector2.ZERO
 	angular_velocity = 0
 	await $Explosion/AnimationPlayer.animation_finished
