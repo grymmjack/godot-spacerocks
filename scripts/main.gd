@@ -19,7 +19,7 @@ func _ready():
 	screensize = get_viewport().get_visible_rect().size
 	$Player.hide()
 	$HUD/MarginContainer.hide()
-	level = 10
+	level = 15
 	roll_rocks()
 
 
@@ -135,7 +135,7 @@ func roll_rocks():
 		spawn_rock(rock_size, null, Vector2.RIGHT.rotated(randf_range(0, TAU)) * randf_range(50, 150 + (level * 10)))
 
 
-func spawn_rock(size, pos=null, vel=null, ch=null, cs=null, cv=null):
+func spawn_rock(size, pos=null, vel=null, ch=null, cs=null, cv=null, ca=null):
 	if pos == null:
 		$RockPath/RockSpawn.progress = randi()
 		pos = $RockPath/RockSpawn.position
@@ -144,19 +144,21 @@ func spawn_rock(size, pos=null, vel=null, ch=null, cs=null, cv=null):
 	var r = rock_scene.instantiate()
 	if ch == null and cs == null and cv == null:
 		r.h = randf_range(0.0, 1.0)
-		r.s = randf_range(0.0, 0.25)
-		r.v = randf_range(0.75, 1.0)
+		r.s = randf_range(0.0, 0.3)
+		r.v = randf_range(0.7, 1.0)
+		r.a = randf_range(0.6, 1.0)
 	else:
 		r.h = ch
 		r.s = cs
 		r.v = cv
+		r.a = ca
 	r.screensize = screensize
-	r.start(pos, vel, size, r.h, r.s, r.v)
+	r.start(pos, vel, size, r.h, r.s, r.v, r.a)
 	call_deferred("add_child", r)
 	r.exploded.connect(self._on_rock_exploded)
 
 
-func _on_rock_exploded(size, radius, pos, vel, shot_level, award_points, h, s, v):
+func _on_rock_exploded(size, radius, pos, vel, shot_level, award_points, h, s, v, a):
 	$Player.shield += 1
 	match shot_level:
 		0,1:
@@ -166,7 +168,7 @@ func _on_rock_exploded(size, radius, pos, vel, shot_level, award_points, h, s, v
 				var newpos = pos + dir * radius
 				var newvel = dir * vel.length() * 1.1
 				if size >= 2:
-					spawn_rock(size - 1, newpos, newvel, h, s, v)
+					spawn_rock(size - 1, newpos, newvel, h, s, v, a)
 		1:
 				score += 15 * size
 				$Player.shield += 5
@@ -181,7 +183,7 @@ func _on_rock_exploded(size, radius, pos, vel, shot_level, award_points, h, s, v
 				if size - 2 > 1:
 					$ChargedShotLevel2ExplodeSound.play()
 					if size >= 3:
-						spawn_rock(size - 2, newpos, newvel)
+						spawn_rock(size - 2, newpos, newvel, h, s, v, a)
 		3,4,5,6,7,8,9,10:
 			score += 40 * size
 			$Player.shield = $Player.max_shield

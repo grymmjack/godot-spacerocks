@@ -128,12 +128,14 @@ grow_vertical = 2
 theme_override_constants/separation = 100
 
 [node name="Message" type="Label" parent="VBoxContainer"]
+modulate = Color(1, 1, 1, 0.784314)
 layout_mode = 2
 text = "Space Rocks!"
 label_settings = ExtResource("3_jsutt")
 horizontal_alignment = 1
 
 [node name="StartButton" type="Button" parent="VBoxContainer"]
+modulate = Color(1, 1, 1, 0.784314)
 layout_mode = 2
 size_flags_horizontal = 4
 theme = ExtResource("11_1555l")
