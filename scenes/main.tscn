@@ -41,8 +41,8 @@ enemy_scene = ExtResource("3_4y3id")
 screen_fx = SubResource("PackedScene_oacvs")
 
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(-192, -96)
-scale = Vector2(1.12706, 1.20573)
+position = Vector2(-280, -248)
+scale = Vector2(1.18916, 1.3838)
 texture = ExtResource("1_aygtu")
 centered = false
 
